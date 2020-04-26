@@ -15,14 +15,14 @@ ActiveRecord::Schema.define(version: 2020_04_26_083100) do
   create_table "dishes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name"
     t.text "description"
-    t.decimal "cost", precision: 10
+    t.decimal "cost", precision: 15, scale: 2
     t.string "image"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "orders", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.decimal "table_no", precision: 10
+    t.integer "table_no"
     t.boolean "is_active"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

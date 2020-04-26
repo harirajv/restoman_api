@@ -3,7 +3,7 @@ class CreateDishes < ActiveRecord::Migration[5.2]
     create_table :dishes do |t|
       t.string :name
       t.text :description
-      t.numeric :cost
+      t.decimal :cost, precision: 15, scale: 2
       t.string :image
 
       t.timestamps
