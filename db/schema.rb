@@ -14,7 +14,7 @@ ActiveRecord::Schema.define(version: 2020_05_03_072625) do
 
   create_table "bills", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.bigint "order_id"
-    t.decimal "cost", precision: 10
+    t.decimal "cost", precision: 15, scale: 2
     t.integer "payment_mode"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
