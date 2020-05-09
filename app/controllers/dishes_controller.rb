@@ -1,13 +1,6 @@
 class DishesController < ApplicationController
   before_action :set_dish, only: [:show, :update, :destroy]
 
-  # GET /dishes
-  def index
-    @dishes = Dish.all
-
-    render json: @dishes
-  end
-
   # GET /dishes/1
   def show
     render json: @dish
@@ -47,5 +40,9 @@ class DishesController < ApplicationController
     # Only allow a trusted parameter "white list" through.
     def dish_params
       params.require(:dish).permit(:name, :description, :cost, :image)
+    end
+
+    def model
+      Dish
     end
 end

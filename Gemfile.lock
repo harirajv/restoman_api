@@ -42,6 +42,7 @@ GEM
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
+    api-pagination (4.8.2)
     arel (9.0.0)
     bootsnap (1.4.6)
       msgpack (~> 1.0)
@@ -67,7 +68,7 @@ GEM
     marcel (0.3.3)
       mimemagic (~> 0.3.2)
     method_source (1.0.0)
-    mimemagic (0.3.4)
+    mimemagic (0.3.5)
     mini_mime (1.0.2)
     mini_portile2 (2.4.0)
     minitest (5.14.0)
@@ -78,6 +79,8 @@ GEM
       mini_portile2 (~> 2.4.0)
     puma (3.12.4)
     rack (2.2.2)
+    rack-cors (1.1.1)
+      rack (>= 2.0.0)
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
     rails (5.2.4.2)
@@ -105,7 +108,7 @@ GEM
       rake (>= 0.8.7)
       thor (>= 0.19.0, < 2.0)
     rake (13.0.1)
-    rb-fsevent (0.10.3)
+    rb-fsevent (0.10.4)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
     ruby_dep (1.5.0)
@@ -120,7 +123,6 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
-    sqlite3 (1.4.2)
     thor (1.0.1)
     thread_safe (0.3.6)
     tzinfo (1.2.7)
@@ -128,21 +130,23 @@ GEM
     websocket-driver (0.7.1)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.4)
+    will_paginate (3.1.8)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  api-pagination (~> 4.8.2)
   bootsnap (>= 1.1.0)
   byebug
   listen (>= 3.0.5, < 3.2)
   mysql2
   puma (~> 3.11)
+  rack-cors (~> 1.1.1)
   rails (~> 5.2.4)
   spring
   spring-watcher-listen (~> 2.0.0)
-  sqlite3
-  tzinfo-data
+  will_paginate (~> 3.1.0)
 
 RUBY VERSION
    ruby 2.6.6p146
