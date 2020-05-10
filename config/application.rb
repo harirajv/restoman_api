@@ -33,5 +33,13 @@ module RestomanApi
     config.api_only = true
 
     config.eager_load_paths += Dir["#{config.root}/app/**/*"]
+
+    config.middleware.insert_before 0, Rack::Cors do
+      allow do
+        origins '*'
+        resource '*', headers: :any, methods: [:get, :post, :put, :delete], 
+        expose: ['Link', 'Page', 'Per-Page', 'Total']
+      end
+    end
   end
 end
