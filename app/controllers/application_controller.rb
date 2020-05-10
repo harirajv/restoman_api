@@ -14,12 +14,19 @@ class ApplicationController < ActionController::API
 
     # Pagination parameter: page number
     def page
-      params[:page].present? && params[:page].to_i || PAGINATION_OPTIONS[:page]
+      pagination_params[:page].present? && pagination_params[:page].to_i || 
+        PAGINATION_OPTIONS[:page]
     end
 
     # Pagination parameter: number of entries per page
     def per_page
-      params[:per_page].present? ? [params[:per_page].to_i, PAGINATION_OPTIONS[:max_per_page]].min
-                                 : PAGINATION_OPTIONS[:max_per_page]
+      pagination_params[:per_page].present? ? 
+        [pagination_params[:per_page].to_i, PAGINATION_OPTIONS[:max_per_page]].min  : 
+        PAGINATION_OPTIONS[:max_per_page]
+    end
+
+    # Parameters whitelist for index action
+    def pagination_params
+      params.permit(:page, :per_page)
     end
 end
