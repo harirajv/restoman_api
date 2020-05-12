@@ -18,7 +18,7 @@ class DishesController < ApplicationController
     end
   end
 
-  # PATCH/PUT /dishes/1
+  # PUT /dishes/1
   def update
     if @dish.update(dish_params)
       render json: @dish

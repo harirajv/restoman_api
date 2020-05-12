@@ -1,9 +1,14 @@
 Rails.application.routes.draw do
   devise_for :users
   scope :api do
-    resources :orders
-    resources :dishes
-    resources :users
+    resources :dishes, only: [:index, :show, :create, :update, :destroy]
+    resources :users, only: [:index, :show, :create, :update]
+    
+    resources :orders, only: [:index, :show, :create, :update] do
+      member do
+        resources :order_items, only: [:index, :show, :create, :update]
+      end
+    end
   end
 
   post 'auth_user' => 'authentication#authenticate_user'

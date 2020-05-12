@@ -27,18 +27,13 @@ class OrdersController < ApplicationController
     end
   end
 
-  # PATCH/PUT /orders/1
+  # PUT /orders/1
   def update
     if @order.update(order_params)
       render json: @order
     else
       render json: @order.errors, status: :unprocessable_entity
     end
-  end
-
-  # DELETE /orders/1
-  def destroy
-    @order.destroy
   end
 
   private
