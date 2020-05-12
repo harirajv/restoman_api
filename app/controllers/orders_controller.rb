@@ -1,5 +1,8 @@
 class OrdersController < ApplicationController
+  include ApplicationConstants
+
   before_action :set_order, only: [:show, :update, :destroy]
+  before_action :validate_user, only: [:create, :update, :destroy]
 
   # GET /orders
   def index
@@ -47,5 +50,9 @@ class OrdersController < ApplicationController
     # Only allow a trusted parameter "white list" through.
     def order_params
       params.require(:order).permit(:table_no, :is_active)
+    end
+
+    def validate_user
+      render json: { errors: ['Unauthorized'] }, status: :forbidden unless ORDER_MODIFICATION_ACCESS_ROLES.include?(@current_user.role)
     end
 end

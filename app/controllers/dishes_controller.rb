@@ -1,5 +1,6 @@
 class DishesController < ApplicationController
   before_action :set_dish, only: [:show, :update, :destroy]
+  before_action :validate_user, only: [:create, :update, :destroy]
 
   # GET /dishes/1
   def show
@@ -44,5 +45,9 @@ class DishesController < ApplicationController
 
     def model
       Dish
+    end
+
+    def validate_user
+      render json: { errors: ['Unauthorized'] }, status: :forbidden unless @current_user.admin?
     end
 end
