@@ -1,8 +1,24 @@
 class ApplicationController < ActionController::API
   include ApplicationConstants
+
+  before_action :authorize_request
+
+  def authorize_request
+    header = request.headers['Authorization'].present? ? request.headers['Authorization'].split(' ').last : nil
+    begin
+      @decoded = JsonWebToken.decode(header)
+      @current_user = User.find(@decoded[:user_id])
+    rescue ActiveRecord::RecordNotFound, JWT::DecodeError => e
+      render json: { errors: e.message }, status: :unauthorized
+    end
+  end
     
   def index
     paginate json: model, page: page, per_page: per_page
+  end
+
+  def routing_error
+    render json: { error: "No route matches #{params[:path]} "}, status: :not_found
   end
 
   private

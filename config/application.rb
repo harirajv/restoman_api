@@ -33,6 +33,7 @@ module RestomanApi
     config.api_only = true
 
     config.eager_load_paths += Dir["#{config.root}/app/**/*"]
+    config.autoload_paths << Rails.root.join('lib')
 
     config.middleware.insert_before 0, Rack::Cors do
       allow do
