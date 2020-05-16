@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-  devise_for :users
   scope :api do
     resources :dishes, only: [:index, :show, :create, :update, :destroy]
     resources :users, only: [:index, :show, :create, :update]
@@ -10,7 +9,5 @@ Rails.application.routes.draw do
       end
     end
   end
-
-  post 'auth_user' => 'authentication#authenticate_user'
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

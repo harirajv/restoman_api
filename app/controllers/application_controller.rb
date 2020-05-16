@@ -1,25 +1,9 @@
 class ApplicationController < ActionController::API
   include ApplicationConstants
-
-  before_action :autheniticate_request!, except: :authenticate_user
-
-  attr_reader :current_user
     
   def index
     paginate json: model, page: page, per_page: per_page
   end
-
-  protected
-
-    def autheniticate_request!
-      unless user_id_in_token?
-        render json: { errors: ['Not Authenticated'] }, status: :unauthorized
-        return
-      end
-      @current_user = User.find(auth_token[:user_id])
-    rescue JWT::VerificationError, JWT::DecodeError => e
-      render json: { errors: [e.message] }, status: :unauthorized
-    end
 
   private
 
@@ -44,19 +28,5 @@ class ApplicationController < ActionController::API
     # Parameters whitelist for index action
     def pagination_params
       params.permit(:page, :per_page)
-    end
-
-    def http_token
-      @http_token ||= if request.headers['Authorization'].present?
-        request.headers['Authorization'].split(' ').last
-      end
-    end
-
-    def auth_token
-      @auth_token ||= JsonWebToken.decode(http_token)
-    end
-
-    def user_id_in_token?
-      http_token.split('.').size == 3 && auth_token.is_a?(Hash) && auth_token[:user_id].to_i
     end
 end
