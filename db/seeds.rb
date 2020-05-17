@@ -13,7 +13,7 @@ Dish.create([
         image: 'https://image.shutterstock.com/image-photo/indian-idly-chutney-sambar-600w-1171507429.jpg'
     },
     {
-        name: 'Masala Dos',
+        name: 'Masala Dosa',
         description: 'Dosa stuffed with spiced potato filling',
         cost: '39.99',
         image: 'https://image.shutterstock.com/image-photo/masala-dosa-south-indian-meal-600w-1008673576.jpg'

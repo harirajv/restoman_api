@@ -14,7 +14,10 @@ class ApplicationController < ActionController::API
   end
     
   def index
-    paginate json: model, page: page, per_page: per_page
+    @records = paginate model.all, page: page, per_page: per_page
+    response.headers['Total-Pages'] = response.headers['Total-Records'].to_i > per_page ?
+                                        response.headers['Total-Records'].to_i/per_page : 1
+    render json: @records, status: :ok
   end
 
   def routing_error
