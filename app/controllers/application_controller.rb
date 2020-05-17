@@ -33,8 +33,7 @@ class ApplicationController < ActionController::API
 
     # Pagination parameter: page number
     def page
-      pagination_params[:page].present? && pagination_params[:page].to_i || 
-        PAGINATION_OPTIONS[:page]
+      pagination_params[:page].present? && pagination_params[:page].to_i || PAGINATION_OPTIONS[:page]
     end
 
     # Pagination parameter: number of entries per page
