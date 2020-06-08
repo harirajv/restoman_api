@@ -8,7 +8,5 @@ module ApplicationConstants
 
   JWT_TOKEN_EXPIRY_TIME = 24.hours.from_now.freeze
 
-  ERROR_MESSAGES = {
-    UPDATE_NOT_ALLOWED: "Update not allowed for %s"
-  }.freeze
+  EMAIL_REGEX = /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/.freeze
 end.freeze
