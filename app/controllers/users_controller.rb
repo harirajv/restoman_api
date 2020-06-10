@@ -1,13 +1,6 @@
 class UsersController < ApplicationController
-  skip_before_action :authorize_request, only: :create
+  skip_before_action :authenticate!, only: [:create, :index]
   before_action :set_user, only: [:show, :update, :destroy]
-
-  # GET /users
-  def index
-    @users = User.all
-
-    render json: @users
-  end
 
   # GET /users/1
   def show
@@ -35,6 +28,11 @@ class UsersController < ApplicationController
   end
 
   private
+
+    def model
+      User
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_user
       @user = User.find(params[:id])

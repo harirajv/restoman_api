@@ -1,22 +1,12 @@
 class ApplicationController < ActionController::API
+  before_action :authenticate!, except: :routing_error
+
   include ApplicationConstants
-
-  before_action :authorize_request
-
-  def authorize_request
-    header = request.headers['Authorization'].present? ? request.headers['Authorization'].split(' ').last : nil
-    begin
-      @decoded = JsonWebToken.decode(header)
-      @current_user = User.find(@decoded[:user_id])
-    rescue ActiveRecord::RecordNotFound, JWT::DecodeError => e
-      render json: { errors: e.message }, status: :unauthorized
-    end
-  end
     
   def index
     @records = paginate model.all, page: page, per_page: per_page
     response.headers['Total-Pages'] = response.headers['Total-Records'].to_i > per_page ?
-                                        response.headers['Total-Records'].to_i/per_page : 1
+                                      response.headers['Total-Records'].to_i/per_page : 1
     render json: @records, status: :ok
   end
 
@@ -25,10 +15,22 @@ class ApplicationController < ActionController::API
   end
 
   private
-
+  
     # Model for controller#index
     def model
       raise NoMethodError, 'model method must be overriden'
+    end
+
+    def authenticate!
+      return @current_user if @current_user.present?
+
+      header = request.headers['Authorization'].present? ? request.headers['Authorization'].split(' ').last : nil
+      begin
+        @decoded = JsonWebToken.decode(header)
+        @current_user = User.find(@decoded[:user_id])
+      rescue ActiveRecord::RecordNotFound, JWT::DecodeError => e
+        render json: { errors: e.message }, status: :unauthorized
+      end
     end
 
     # Pagination parameter: page number

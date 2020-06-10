@@ -6,7 +6,7 @@ module ApplicationConstants
 
   ORDER_MODIFICATION_ACCESS = ['admin', 'waiter'].freeze
 
-  JWT_TOKEN_EXPIRY_TIME = 24.hours.from_now.freeze
+  JWT_EXPIRY_TIME = 24.hours.freeze
 
   EMAIL_REGEX = /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/.freeze
 end.freeze

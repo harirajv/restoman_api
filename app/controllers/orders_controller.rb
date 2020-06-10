@@ -1,15 +1,8 @@
 class OrdersController < ApplicationController
+  before_action :set_order, only: [:show, :update]
+  before_action :validate_user, only: [:create, :update]
+
   include ApplicationConstants
-
-  before_action :set_order, only: [:show, :update, :destroy]
-  before_action :validate_user, only: [:create, :update, :destroy]
-
-  # GET /orders
-  def index
-    @orders = Order.all
-
-    render json: @orders
-  end
 
   # GET /orders/1
   def show
@@ -37,6 +30,10 @@ class OrdersController < ApplicationController
   end
 
   private
+    def model
+      Order
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_order
       @order = Order.find(params[:id])

@@ -1,12 +1,5 @@
 class OrderItemsController < ApplicationController
-  before_action :set_order_item, only: [:show, :update, :destroy]
-
-  # GET /orders/:order_id/order_items
-  def index
-    @order_items = OrderItem.all
-
-    render json: @order_items
-  end
+  before_action :set_order_item, only: [:show, :update]
 
   # GET /orders/:order_id/order_items/1
   def show
@@ -34,6 +27,11 @@ class OrderItemsController < ApplicationController
   end
 
   private
+
+    def model
+      OrderItem
+    end
+    
     # Use callbacks to share common setup or constraints between actions.
     def set_order_item
       @order_item = OrderItem.find(params[:id])

@@ -1,9 +1,9 @@
 class DishesController < ApplicationController
-  include ApplicationConstants
-  include DishesConstants
-
   before_action :set_dish, only: [:show, :update, :destroy]
   before_action :validate_user, only: [:create, :update, :destroy]
+
+  include ApplicationConstants
+  include DishesConstants
 
   # GET /dishes/1
   def show
@@ -42,6 +42,11 @@ class DishesController < ApplicationController
   end
 
   private
+
+    def model
+      Dish
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_dish
       @dish = Dish.find(params[:id])
@@ -50,11 +55,7 @@ class DishesController < ApplicationController
     # Only allow a trusted parameter "white list" through.
     def dish_params
       params.require(:dish).permit(:name, :description, :cost, :image)
-    end
-
-    def model
-      Dish
-    end
+    end    
 
     def validate_user
       render json: { errors: ['Unauthorized'] },
