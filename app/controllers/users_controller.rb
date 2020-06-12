@@ -1,6 +1,9 @@
 class UsersController < ApplicationController
-  skip_before_action :authenticate!, only: [:create, :index]
+  skip_before_action :authenticate!, only: :create
+  before_action :validate_user, only: :update
   before_action :set_user, only: [:show, :update, :destroy]
+
+  include ErrorConstants
 
   # GET /users/1
   def show
@@ -41,5 +44,9 @@ class UsersController < ApplicationController
     # Only allow a trusted parameter "white list" through.
     def user_params
       params.permit(:name, :role, :email, :password, :password_confirmation)
+    end
+
+    def validate_user
+      render json: { errors: ERROR_MESSAGES[:unauthorized] }, status: :forbidden unless @current_user.admin?
     end
 end

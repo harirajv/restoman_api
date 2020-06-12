@@ -7,7 +7,7 @@ class OrderItemsControllerTest < ActionDispatch::IntegrationTest
 
   test "should get index" do
     get order_items_url, as: :json
-    assert_response :success
+    assert_response 200
   end
 
   test "should create order_item" do

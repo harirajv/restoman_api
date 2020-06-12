@@ -1,13 +1,13 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  name: MyString
-  description: MyText
-  cost: 
-  image: MyString
+  name: dish1
+  description: description1
+  cost: 9.99
+  image: url1
 
 two:
-  name: MyString
-  description: MyText
-  cost: 
-  image: MyString
+  name: dish2
+  description: description2
+  cost: 19.99
+  image: url2

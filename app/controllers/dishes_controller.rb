@@ -4,6 +4,7 @@ class DishesController < ApplicationController
 
   include ApplicationConstants
   include DishesConstants
+  include ErrorConstants
 
   # GET /dishes/1
   def show
@@ -50,11 +51,13 @@ class DishesController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_dish
       @dish = Dish.find(params[:id])
+    rescue ActiveRecord::RecordNotFound => e
+      render json: {}, status: :not_found
     end
 
     # Only allow a trusted parameter "white list" through.
     def dish_params
-      params.require(:dish).permit(:name, :description, :cost, :image)
+      params.permit(:name, :description, :cost, :image)
     end    
 
     def validate_user
