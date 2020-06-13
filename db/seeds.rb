@@ -23,10 +23,10 @@ Dish.create!([
 
 User.create!([
   {
-    name: 'admin_user',
+    name: 'admin',
     role: 'admin',
-    email: 'admin@resto.com',
-    password: 'password',
+    email: 'admin@email.com',
+    password: 'admin123',
     password_digest: BCrypt::Password.create('password')
   }
 ])

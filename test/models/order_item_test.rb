@@ -1,10 +1,10 @@
 require 'test_helper'
 
 class OrderItemTest < ActiveSupport::TestCase
-  test "status is mandatory" do
-    order_item = OrderItem.new(dish_id: Dish.first.id, order_id: Order.first.id, quantity: 1)
+  test "quantity is mandatory" do
+    order_item = OrderItem.new(dish_id: Dish.first.id, order_id: Order.first.id)
     refute order_item.valid?
-    assert order_item.errors[:status].include?(ERROR_MESSAGES[:cant_be_blank])
+    assert order_item.errors[:quantity].include?(ERROR_MESSAGES[:cant_be_blank])
   end
 
   test "minimum quantity value is 1" do

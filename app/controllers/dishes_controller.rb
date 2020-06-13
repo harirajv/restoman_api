@@ -1,5 +1,5 @@
 class DishesController < ApplicationController
-  before_action :set_dish, only: [:show, :update, :destroy]
+  # before_action :set_dish, only: [:show, :update, :destroy]
   before_action :validate_user, only: [:create, :update, :destroy]
 
   include ApplicationConstants
@@ -26,7 +26,7 @@ class DishesController < ApplicationController
   def update
     unallowed_fields = dish_params.keys - UPDATE_ALLOWED_FIELDS[@current_user.role]
     if unallowed_fields.present?
-      render json: { error: ERROR_MESSAGES[:UPDATE_NOT_ALLOWED] % unallowed_fields.join(', ') }, status: :forbidden
+      render json: { errors: [ERROR_MESSAGES[:UPDATE_NOT_ALLOWED] % unallowed_fields.join(', ')] }, status: :forbidden
       return
     end
     
@@ -49,19 +49,13 @@ class DishesController < ApplicationController
     end
 
     # Use callbacks to share common setup or constraints between actions.
-    def set_dish
-      @dish = Dish.find(params[:id])
-    rescue ActiveRecord::RecordNotFound => e
-      render json: {}, status: :not_found
-    end
-
     # Only allow a trusted parameter "white list" through.
     def dish_params
       params.permit(:name, :description, :cost, :image)
     end    
 
     def validate_user
-      render json: { errors: ['Unauthorized'] },
+      render json: { errors: [ERROR_MESSAGES[:not_privileged]] },
              status: :forbidden if RESTRICTED_ACTIONS[@current_user.role].include?(action_name)
     end
 end

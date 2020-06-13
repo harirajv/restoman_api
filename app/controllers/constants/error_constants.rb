@@ -8,7 +8,8 @@ module ErrorConstants
     is_invalid: "is invalid",
     nil_token: "Nil JSON web token",
     too_short_min_is: "is too short (minimum is %d characters)",
-    unauthorized: "Insufficient privileges",
+    not_privileged: "Insufficient privileges",
+    record_not_found: "Couldn't find %s with '%s'=%s",
     UPDATE_NOT_ALLOWED: "Update not allowed for %s"
   }.freeze
 end.freeze

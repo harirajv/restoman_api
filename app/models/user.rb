@@ -3,6 +3,8 @@ class User < ApplicationRecord
   
   enum role: { admin: 0, waiter: 1, chef:2 }
 
+  has_many :orders
+  
   has_secure_password
 
   validates :name, :role, presence: true, on: :create

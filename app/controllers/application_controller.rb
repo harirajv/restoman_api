@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::API
   before_action :authenticate!, except: :routing_error
+  before_action :set_record, only: [:show, :update, :destroy]
 
   include ApplicationConstants
     
@@ -19,6 +20,12 @@ class ApplicationController < ActionController::API
     # Model for controller#index
     def model
       raise NoMethodError, 'model method must be overriden'
+    end
+
+    def set_record
+      instance_variable_set("@#{model.to_s.underscore}", model.find(params[:id]))
+    rescue ActiveRecord::RecordNotFound => e
+      render json: { errors: [ErrorConstants::ERROR_MESSAGES[:record_not_found] % [model, 'id', params[:id]]] }, status: :not_found
     end
 
     def authenticate!

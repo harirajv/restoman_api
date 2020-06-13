@@ -11,7 +11,7 @@ class OrdersController < ApplicationController
 
   # POST /orders
   def create
-    @order = Order.new(order_params)
+    @order = @current_user.orders.new(order_params)
 
     if @order.save
       render json: @order, status: :created, location: @order
@@ -41,10 +41,10 @@ class OrdersController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def order_params
-      params.require(:order).permit(:table_no, :is_active)
+      params.permit(:table_no, :is_active)
     end
 
     def validate_user
-      render json: { errors: ['Unauthorized'] }, status: :forbidden unless ORDER_MODIFICATION_ACCESS_ROLES.include?(@current_user.role)
+      render json: { errors: [ErrorConstants::ERROR_MESSAGES[:not_privileged]] }, status: :forbidden if @current_user.chef?
     end
 end

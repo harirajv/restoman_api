@@ -1,7 +1,5 @@
 class UsersController < ApplicationController
-  skip_before_action :authenticate!, only: :create
-  before_action :validate_user, only: :update
-  before_action :set_user, only: [:show, :update, :destroy]
+  before_action :validate_user, only: [:create, :update]
 
   include ErrorConstants
 
@@ -36,17 +34,12 @@ class UsersController < ApplicationController
       User
     end
 
-    # Use callbacks to share common setup or constraints between actions.
-    def set_user
-      @user = User.find(params[:id])
-    end
-
     # Only allow a trusted parameter "white list" through.
     def user_params
       params.permit(:name, :role, :email, :password, :password_confirmation)
     end
 
     def validate_user
-      render json: { errors: ERROR_MESSAGES[:unauthorized] }, status: :forbidden unless @current_user.admin?
+      render json: { errors: [ERROR_MESSAGES[:not_privileged]] }, status: :forbidden unless @current_user.admin?
     end
 end
