@@ -1,5 +1,5 @@
 class AuthenticationController < ApplicationController
-  before_action :authorize_request, except: :login
+  skip_before_action :authenticate!, on: :login
 
   include ApplicationConstants
   include ErrorConstants
@@ -8,10 +8,10 @@ class AuthenticationController < ApplicationController
   def login
     @user = User.find_by_email(login_params[:email])
     if @user.nil?
-      render json: { error: ERROR_MESSAGES[:invalid_user_email] % login_params[:email] }, status: unauthorized
+      render json: { error: ERROR_MESSAGES[:invalid_user_email] % login_params[:email] }, status: :unauthorized
       return
     end
-    
+
     if @user.authenticate(login_params[:password])
       token = JsonWebToken.encode({ user_id: @user.id, role: @user.role })
       render json: { token: token }, status: :ok
@@ -27,6 +27,6 @@ class AuthenticationController < ApplicationController
     end
 
     def login_params
-      params.permit(:email, :password)
+      params.require(:authentication).permit(:email, :password)
     end
 end

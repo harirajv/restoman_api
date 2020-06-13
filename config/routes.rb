@@ -4,9 +4,7 @@ Rails.application.routes.draw do
     resources :users, only: [:index, :show, :create, :update]
     
     resources :orders, only: [:index, :show, :create, :update] do
-      member do
-        resources :order_items, only: [:index, :show, :create, :update]
-      end
+      resources :order_items, only: [:index, :show, :create, :update]
     end
   end
   post '/login', to: 'authentication#login'

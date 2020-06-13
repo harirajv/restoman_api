@@ -4,6 +4,12 @@ class OrderItemsController < ApplicationController
 
   include ErrorConstants
 
+  # GET /orders/:order_id/order_items
+  def index
+    model = @order.order_items
+    super
+  end
+
   # GET /orders/:order_id/order_items/1
   def show
     render json: @order_item
@@ -14,7 +20,7 @@ class OrderItemsController < ApplicationController
     @order_item = @order.order_items.new(order_item_params)
 
     if @order_item.save
-      render json: @order_item, status: :created, location: @order_item
+      render json: @order_item, status: :created
     else
       render json: @order_item.errors, status: :unprocessable_entity
     end
@@ -38,11 +44,11 @@ class OrderItemsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     # Only allow a trusted parameter "white list" through.
     def order_item_params
-      params.permit(:dish_id, :quantity)
+      params.permit(:order_id, :dish_id, :quantity)
     end
 
     def set_order
-      @order = Order.find(params[:order_id])
+      @order = Order.find(order_item_params[:order_id])
     rescue ActiveRecord::RecordNotFound
       render json: { errors: [ERROR_MESSAGES[:record_not_found] % ['Order', 'id', params[:order_id]]] }, status: :not_found
     end

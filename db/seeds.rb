@@ -27,6 +27,29 @@ User.create!([
     role: 'admin',
     email: 'admin@email.com',
     password: 'admin123',
-    password_digest: BCrypt::Password.create('password')
+    password_confirmation: 'admin123'
+  }
+])
+
+Order.create!([
+  {
+    table_no: 1,
+    user_id: User.first.id
+  }
+])
+
+OrderItem.create!([
+  {
+    dish_id: Dish.first.id,
+    order_id: Order.first.id,
+    quantity: 5
+  }
+])
+
+Bill.create!([
+  {
+    order_id: Order.first.id,
+    cost: 150,
+    payment_mode: 0
   }
 ])

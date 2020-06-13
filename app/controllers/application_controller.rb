@@ -5,9 +5,8 @@ class ApplicationController < ActionController::API
   include ApplicationConstants
     
   def index
-    @records = paginate model.all, page: page, per_page: per_page
-    response.headers['Total-Pages'] = response.headers['Total-Records'].to_i > per_page ?
-                                      response.headers['Total-Records'].to_i/per_page : 1
+    @records = paginate model, page: page, per_page: per_page
+    response.headers['Total-Pages'] = total_pages
     render json: @records, status: :ok
   end
 
@@ -50,6 +49,10 @@ class ApplicationController < ActionController::API
       pagination_params[:per_page].present? ? 
         [pagination_params[:per_page].to_i, PAGINATION_OPTIONS[:max_per_page]].min  : 
         PAGINATION_OPTIONS[:max_per_page]
+    end
+
+    def total_pages
+      response.headers['Total-Records'].to_i > per_page ? response.headers['Total-Records'].to_i/per_page : 1
     end
 
     # Parameters whitelist for index action
