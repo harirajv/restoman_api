@@ -1,6 +1,7 @@
 class AuthenticationController < ApplicationController
   skip_before_action :authenticate!, on: :login
 
+  include ActionController::ImplicitRender
   include ApplicationConstants
   include ErrorConstants
 
@@ -13,8 +14,8 @@ class AuthenticationController < ApplicationController
     end
 
     if @user.authenticate(login_params[:password])
-      token = JsonWebToken.encode({ user_id: @user.id, role: @user.role })
-      render json: { token: token }, status: :ok
+      @token = JsonWebToken.encode({ user_id: @user.id, role: @user.role })
+      render status: :ok
     else
       render json: { error: 'Unauthorized' }, status: :unauthorized
     end
