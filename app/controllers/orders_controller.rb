@@ -2,6 +2,7 @@ class OrdersController < ApplicationController
   before_action :set_order, only: [:show, :update]
   before_action :validate_user, only: [:create, :update]
 
+  include ActionController::ImplicitRender
   include ApplicationConstants
   include OrderItemsConcern
 
@@ -16,7 +17,8 @@ class OrdersController < ApplicationController
       @order = @current_user.orders.create!(table_no: order_params[:table_no])
       create_order_items(@order, order_items_params)
     end
-    render json: @order.as_json.merge({ order_items: (@order.order_items.reload || []) }), status: :created
+    @order_items = @order.order_items.reload
+    render status: :created
   rescue => e
     Rails.logger.error "Order create failed: #{e.message}, backtrace: #{e.backtrace}"
     render json: { errors: e.message }, status: :unprocessable_entity
@@ -27,7 +29,7 @@ class OrdersController < ApplicationController
     ActiveRecord::Base.transaction do
       @order.update(order_params)
       update_order_items(@order, order_items_params) if params[:order_items]
-      render json: @order.as_json.merge({ order_items: (@order.order_items.reload || []) }), status: :ok
+      # render json: @order.as_json.merge({ order_items: (@order.order_items.reload || []) }), status: :ok
     end
   rescue => e
     Rails.logger.error "Order update failed: #{e.message}, backtrace: #{e.backtrace}"

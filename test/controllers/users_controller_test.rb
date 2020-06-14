@@ -12,7 +12,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   test "index should return unauthorized when token is absent" do
     get users_url
     assert_response 401
-    assert parsed_response[:errors].include?(ERROR_MESSAGES[:nil_token])
+    assert_json_match(error_response(ERROR_MESSAGES[:nil_token]), response.body)
   end
 
   test "should get index" do
@@ -23,19 +23,19 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   test "create should return unauthorized when token is absent" do
     post users_url, params: { name: @user.name, role: @user.role, email: 'new@email.com', password: 'password' }
     assert_response 401
-    assert parsed_response[:errors].include?(ERROR_MESSAGES[:nil_token])
+    assert_json_match(error_response(ERROR_MESSAGES[:nil_token]), response.body)
   end
 
   test "create should return forbidden if current user is not admin" do
     not_admin = users(:waiter)
     post users_url, params: { name: @user.name, role: @user.role, email: 'new@email.com', password: 'password' }, headers: { 'Authorization': generate_jwt(not_admin) }
     assert_response 403
-    assert parsed_response[:errors].include?(ERROR_MESSAGES[:not_privileged])
+    assert_json_match(error_response(ERROR_MESSAGES[:not_privileged]), response.body)
 
     not_admin = users(:chef)
     post users_url, params: { name: @user.name, role: @user.role, email: 'new@email.com', password: 'password' }, headers: { 'Authorization': generate_jwt(not_admin) }
     assert_response 403
-    assert parsed_response[:errors].include?(ERROR_MESSAGES[:not_privileged])
+    assert_json_match(error_response(ERROR_MESSAGES[:not_privileged]), response.body)
   end
 
   test "should create user" do
@@ -49,13 +49,13 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   test "show should return unauthorized when token is absent" do
     get user_url(@user)
     assert_response 401
-    assert parsed_response[:errors].include?(ERROR_MESSAGES[:nil_token])
+    assert_json_match(error_response(ERROR_MESSAGES[:nil_token]), response.body)
   end
 
   test "show should return not_found if user_id is invalid" do
     get user_url(0), headers: { 'Authorization': generate_jwt(@user) }
     assert_response 404
-    assert parsed_response[:errors].include?(RECORD_NOT_FOUND)
+    assert response.parsed_body['errors'].include?(RECORD_NOT_FOUND)
   end
 
   test "should show user" do
@@ -66,25 +66,25 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   test "update should return unauthorized when token is absent" do
     put user_url(@user), params: { name: @user.name }
     assert_response 401
-    assert parsed_response[:errors].include?(ERROR_MESSAGES[:nil_token])
+    assert_json_match(error_response(ERROR_MESSAGES[:nil_token]), response.body)
   end
 
   test "update should return forbidden if current user is not admin" do
     not_admin = users(:waiter)
     put user_url(@user), params: { name: @user.name }, headers: { 'Authorization': generate_jwt(not_admin) }
     assert_response 403
-    assert parsed_response[:errors].include?(ERROR_MESSAGES[:not_privileged])
+    assert_json_match(error_response(ERROR_MESSAGES[:not_privileged]), response.body)
 
     not_admin = users(:chef)
     put user_url(@user), params: { name: @user.name }, headers: { 'Authorization': generate_jwt(not_admin) }
     assert_response 403
-    assert parsed_response[:errors].include?(ERROR_MESSAGES[:not_privileged])
+    assert_json_match(error_response(ERROR_MESSAGES[:not_privileged]), response.body)
   end
 
   test "update should return not_found if user_id is invalid" do
     put user_url(0), params: { name: @user.name }, headers: { 'Authorization': generate_jwt(@user) }
     assert_response 404
-    assert parsed_response[:errors].include?(RECORD_NOT_FOUND)
+    assert response.parsed_body['errors'].include?(RECORD_NOT_FOUND)
   end
 
   test "should update user" do

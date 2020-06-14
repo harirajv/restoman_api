@@ -12,7 +12,7 @@ gem 'mysql2'
 # Use Puma as the app server
 gem 'puma', '~> 3.11'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-# gem 'jbuilder', '~> 2.5'
+gem 'jbuilder', '~> 2.5'
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 4.0'
 # Use ActiveModel has_secure_password
@@ -40,6 +40,9 @@ gem 'api-pagination', '~> 4.8.2'
 
 # Bulk insert data without N+1 insert problem
 gem 'activerecord-import', '~> 1.0.5'
+
+# Match JSON responses
+gem 'json_expressions'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

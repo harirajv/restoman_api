@@ -1,6 +1,7 @@
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'
 require 'rails/test_help'
+require 'json_expressions/minitest'
 
 class ActiveSupport::TestCase
   include ErrorConstants
@@ -15,7 +16,7 @@ class ActiveSupport::TestCase
       JsonWebToken.encode({user_id: user.id, role:user.role})
     end
 
-    def parsed_response
-      HashWithIndifferentAccess.new(JSON.parse(response.body))
+    def error_response(error)
+      { errors: [*error] }
     end
 end

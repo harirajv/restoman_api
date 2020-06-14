@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  scope :api do
+  scope :api, defaults: { format: :json } do
     resources :dishes, only: [:index, :show, :create, :update, :destroy]
     resources :users, only: [:index, :show, :create, :update]
     
