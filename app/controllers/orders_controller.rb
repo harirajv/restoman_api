@@ -3,6 +3,7 @@ class OrdersController < ApplicationController
   before_action :validate_user, only: [:create, :update]
 
   include ApplicationConstants
+  include OrderItemsConcern
 
   # GET /orders/1
   def show
@@ -11,22 +12,26 @@ class OrdersController < ApplicationController
 
   # POST /orders
   def create
-    @order = @current_user.orders.new(order_params)
-
-    if @order.save
-      render json: @order, status: :created, location: @order
-    else
-      render json: @order.errors, status: :unprocessable_entity
+    ActiveRecord::Base.transaction do
+      @order = @current_user.orders.create!(table_no: order_params[:table_no])
+      create_order_items(@order, order_items_params)
     end
+    render json: @order.as_json.merge({ order_items: (@order.order_items.reload || []) }), status: :created
+  rescue => e
+    Rails.logger.error "Order create failed: #{e.message}, backtrace: #{e.backtrace}"
+    render json: { errors: e.message }, status: :unprocessable_entity
   end
 
   # PUT /orders/1
   def update
-    if @order.update(order_params)
-      render json: @order
-    else
-      render json: @order.errors, status: :unprocessable_entity
+    ActiveRecord::Base.transaction do
+      @order.update(order_params)
+      update_order_items(@order, order_items_params) if params[:order_items]
+      render json: @order.as_json.merge({ order_items: (@order.order_items.reload || []) }), status: :ok
     end
+  rescue => e
+    Rails.logger.error "Order update failed: #{e.message}, backtrace: #{e.backtrace}"
+    render json: { errors: e.message }, status: :unprocessable_entity
   end
 
   private
@@ -41,7 +46,21 @@ class OrdersController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def order_params
-      params.permit(:table_no, :is_active)
+      case action_name.to_sym
+      when :create
+        params.permit(:table_no)
+      when :update
+        params.permit(:table_no, :is_active)
+      end
+    end
+
+    def order_items_params
+      case action_name.to_sym
+      when :create
+        params.require(:order_items).map { |param| param.permit(:dish_id, :quantity) }
+      when :update
+        params.require(:order_items).map { |param| param.permit(:id, :dish_id, :quantity) }
+      end
     end
 
     def validate_user

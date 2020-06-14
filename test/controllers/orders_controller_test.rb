@@ -33,9 +33,10 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     assert parsed_response[:errors].include?(ERROR_MESSAGES[:not_privileged])
   end
 
-  test "should create order" do
-    assert_difference('Order.count') do
-      post orders_url, params: { is_active: @order.is_active, table_no: @order.table_no }, headers: { 'Authorization': generate_jwt(@user) }
+  test "should create order with order_items" do
+    order_items = [{dish_id: dishes(:one).id, quantity: 3}, {dish_id: dishes(:two).id, quantity: 5}]
+    assert_difference ->{ Order.count } => 1, -> { OrderItem.count } => 2 do
+      post orders_url, params: { table_no: @order.table_no, order_items: order_items }, headers: { 'Authorization': generate_jwt(@user) }
     end
 
     assert_response 201
@@ -77,8 +78,13 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     assert parsed_response[:errors].include?(RECORD_NOT_FOUND)
   end
 
-  test "should update order" do
-    put order_url(@order), params: { is_active: @order.is_active, table_no: @order.table_no }, headers: { 'Authorization': generate_jwt(@user) }
+  test "should update order and order_items" do
+    order_items = [{id: order_items(:one).id, dish_id: dishes(:one).id, quantity: 10}, { dish_id: dishes(:two).id, quantity: 20 }]
+    assert_difference('OrderItem.count') do
+      put order_url(@order), params: { table_no: 100, order_items: order_items }, headers: { 'Authorization': generate_jwt(@user) }
+    end
+    
     assert_response 200
+    assert_equal 100, Order.find(@order.id).table_no
   end
 end
