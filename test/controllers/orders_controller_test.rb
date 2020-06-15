@@ -18,6 +18,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
   test "should get index" do
     get orders_url, headers: { 'Authorization': generate_jwt(@user) }
     assert_response 200
+    assert_json_match(Order.all.map(&:as_json), response.body)
   end
 
   test "create should return unauthorized when token is absent" do
@@ -35,11 +36,16 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
 
   test "should create order with order_items" do
     order_items = [{dish_id: dishes(:one).id, quantity: 3}, {dish_id: dishes(:two).id, quantity: 5}]
+    payload = { table_no: @order.table_no, order_items: order_items }
+
     assert_difference ->{ Order.count } => 1, -> { OrderItem.count } => 2 do
-      post orders_url, params: { table_no: @order.table_no, order_items: order_items }, headers: { 'Authorization': generate_jwt(@user) }
+      post orders_url, params: payload, headers: { 'Authorization': generate_jwt(@user) }
     end
 
     assert_response 201
+    pattern = payload.merge({id: wildcard_matcher, is_active: true, user_id: @user.id, created_at: wildcard_matcher, updated_at: wildcard_matcher})
+    pattern[:order_items].each { |order_item| order_item.merge!({id: wildcard_matcher, order_id: response.parsed_body['id'], status: 'preparing', created_at: wildcard_matcher, updated_at: wildcard_matcher}) }
+    assert_json_match(pattern, response.body)
   end
 
   test "show should return unauthorized when token is absent" do
@@ -57,6 +63,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
   test "should show order" do
     get order_url(@order), headers: { 'Authorization': generate_jwt(@user) }
     assert_response 200
+    assert_json_match(Order.find(@order.id).as_json, response.body)
   end
 
   test "update should return unauthorized when token is absent" do
@@ -80,10 +87,17 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
 
   test "should update order and order_items" do
     order_items = [{id: order_items(:one).id, dish_id: dishes(:one).id, quantity: 10}, { dish_id: dishes(:two).id, quantity: 20 }]
+    payload = { table_no: 100, order_items: order_items }
     assert_difference('OrderItem.count') do
-      put order_url(@order), params: { table_no: 100, order_items: order_items }, headers: { 'Authorization': generate_jwt(@user) }
+      put order_url(@order), params: payload, headers: { 'Authorization': generate_jwt(@user) }
     end
     
     assert_response 200
+    
+    pattern = payload.merge({ id: @order.id, is_active: true, user_id: @user.id, created_at: wildcard_matcher, updated_at: wildcard_matcher })
+    pattern[:order_items][0].merge! ({ order_id: @order.id, status: order_items(:one).status, created_at: order_items(:one).created_at, updated_at: wildcard_matcher })
+    pattern[:order_items][1].merge! ({ id: wildcard_matcher, order_id: @order.id,  status: OrderItem.statuses.first[0], created_at: wildcard_matcher, updated_at: wildcard_matcher })
+    
+    assert_json_match(pattern, response.body)
   end
 end

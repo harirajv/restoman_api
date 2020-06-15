@@ -29,8 +29,8 @@ class OrdersController < ApplicationController
     ActiveRecord::Base.transaction do
       @order.update(order_params)
       update_order_items(@order, order_items_params) if params[:order_items]
-      # render json: @order.as_json.merge({ order_items: (@order.order_items.reload || []) }), status: :ok
     end
+    @order_items = @order.order_items.reload
   rescue => e
     Rails.logger.error "Order update failed: #{e.message}, backtrace: #{e.backtrace}"
     render json: { errors: e.message }, status: :unprocessable_entity

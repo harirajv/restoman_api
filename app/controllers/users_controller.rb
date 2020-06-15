@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
   before_action :validate_user, only: [:create, :update]
 
+  include UsersConstants
   include ErrorConstants
 
   # GET /users/1
@@ -21,6 +22,12 @@ class UsersController < ApplicationController
 
   # PUT /users/1
   def update
+    unallowed_fields = user_params.keys - UPDATE_ALLOWED_FIELDS[@current_user.role]
+    if unallowed_fields.present?
+      render json: { errors: [ERROR_MESSAGES[:update_not_allowed] % unallowed_fields.join(', ')] }, status: :forbidden
+      return
+    end
+
     if @user.update(user_params)
       render json: @user
     else
@@ -40,6 +47,7 @@ class UsersController < ApplicationController
     end
 
     def validate_user
-      render json: { errors: [ERROR_MESSAGES[:not_privileged]] }, status: :forbidden unless @current_user.admin?
+      render json: { errors: [ERROR_MESSAGES[:not_privileged]] },
+              status: :forbidden if RESTRICTED_ACTIONS[@current_user.role].include?(action_name)
     end
 end

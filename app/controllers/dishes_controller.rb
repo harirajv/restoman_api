@@ -26,7 +26,7 @@ class DishesController < ApplicationController
   def update
     unallowed_fields = dish_params.keys - UPDATE_ALLOWED_FIELDS[@current_user.role]
     if unallowed_fields.present?
-      render json: { errors: [ERROR_MESSAGES[:UPDATE_NOT_ALLOWED] % unallowed_fields.join(', ')] }, status: :forbidden
+      render json: { errors: [ERROR_MESSAGES[:update_not_allowed] % unallowed_fields.join(', ')] }, status: :forbidden
       return
     end
     
@@ -51,7 +51,12 @@ class DishesController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     # Only allow a trusted parameter "white list" through.
     def dish_params
-      params.permit(:name, :description, :cost, :image)
+      case action_name.to_sym
+      when :create
+        params.permit(:name, :description, :cost, :image)
+      when :update
+        params.permit(:name, :description, :cost, :image, :is_active)
+      end
     end    
 
     def validate_user

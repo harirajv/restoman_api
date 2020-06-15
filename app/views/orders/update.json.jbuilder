@@ -1,2 +1,2 @@
 json.merge! @order.as_json
-json.order_items @order.order_items
+json.order_items @order_items
