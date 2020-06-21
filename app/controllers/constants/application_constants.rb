@@ -6,5 +6,7 @@ module ApplicationConstants
 
   JWT_EXPIRY_TIME = 24.hours.freeze
 
+  RESET_PASSWORD_TOKEN_EXPIRY_TIME = 1.hour.freeze
+
   EMAIL_REGEX = /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/.freeze
 end.freeze

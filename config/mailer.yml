@@ -1,0 +1,12 @@
+default: &default
+  email: ENV['email']
+  password: ENV['password']
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default

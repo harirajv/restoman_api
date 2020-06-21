@@ -11,6 +11,8 @@ Rails.application.routes.draw do
     end
 
     post '/login', to: 'authentication#login'
+    post '/forgot', to: 'authentication#forgot'
+    post '/reset', to: 'authentication#reset'
   end
 
   match '*path', to: 'application#routing_error', via: :all

@@ -42,5 +42,7 @@ module RestomanApi
         expose: ['Link', 'Page', 'Per-Page', 'Total']
       end
     end
+
+    config.mailer = config_for(:mailer)
   end
 end

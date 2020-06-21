@@ -8,9 +8,10 @@ module ErrorConstants
     invalid_password: "Password is invalid",
     is_invalid: "is invalid",
     nil_token: "Nil JSON web token",
-    too_short_min_is: "is too short (minimum is %d characters)",
     not_privileged: "Insufficient privileges",
     record_not_found: "Couldn't find %s with '%s'=%s",
+    token_expired: 'Token expired',
+    too_short_min_is: "is too short (minimum is %d characters)",
     update_not_allowed: "Update not allowed for %s"
   }.freeze
 end.freeze
