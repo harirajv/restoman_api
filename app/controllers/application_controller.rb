@@ -1,17 +1,18 @@
 class ApplicationController < ActionController::API
   before_action :authenticate!, except: :routing_error
   before_action :set_record, only: [:show, :update, :destroy]
+  before_action :set_response_headers, only: :index
 
   include ApplicationConstants
     
   def index
     @records = paginate model, page: page, per_page: per_page
-    response.headers['Total-Pages'] = total_pages
+    # response.headers['Total-Pages'] = total_pages
     render json: @records, status: :ok
   end
 
   def routing_error
-    render json: { error: "No route matches #{params[:path]} "}, status: :not_found
+    render json: { error: "No route matches #{request.method} #{params[:path]} "}, status: :not_found
   end
 
   private
@@ -58,5 +59,9 @@ class ApplicationController < ActionController::API
     # Parameters whitelist for index action
     def pagination_params
       params.permit(:page, :per_page)
+    end
+
+    def set_response_headers
+      response.set_header('Total-Pages', total_pages)
     end
 end

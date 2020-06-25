@@ -88,13 +88,14 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
   test "should update order and order_items" do
     order_items = [{id: order_items(:one).id, dish_id: dishes(:one).id, quantity: 10}, { dish_id: dishes(:two).id, quantity: 20 }]
     payload = { table_no: 100, order_items: order_items }
+
     assert_difference('OrderItem.count') do
       put order_url(@order), params: payload, headers: { 'Authorization': generate_jwt(@user) }
     end
     
     assert_response 200
     
-    pattern = payload.merge({ id: @order.id, is_active: true, user_id: @user.id, created_at: wildcard_matcher, updated_at: wildcard_matcher })
+    pattern = payload.merge({ id: @order.id, is_active: true, user_id: @user.id, created_at: @order.created_at, updated_at: wildcard_matcher })
     pattern[:order_items][0].merge! ({ order_id: @order.id, status: order_items(:one).status, created_at: order_items(:one).created_at, updated_at: wildcard_matcher })
     pattern[:order_items][1].merge! ({ id: wildcard_matcher, order_id: @order.id,  status: OrderItem.statuses.first[0], created_at: wildcard_matcher, updated_at: wildcard_matcher })
     

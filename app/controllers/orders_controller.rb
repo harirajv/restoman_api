@@ -15,7 +15,7 @@ class OrdersController < ApplicationController
   def create
     ActiveRecord::Base.transaction do
       @order = @current_user.orders.create!(table_no: order_params[:table_no])
-      create_order_items(@order, order_items_params)
+      add_order_items(@order, order_items_params)
     end
     @order_items = @order.order_items.reload
     render status: :created

@@ -27,6 +27,10 @@ class User < ApplicationRecord
     self.update!(password: password, password_confirmation: password)
   end
 
+  def facade
+    self.attributes.except('password_digest', 'reset_password_token', 'reset_password_sent_at')
+  end
+
   private
 
     def generate_token

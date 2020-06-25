@@ -4,9 +4,15 @@ class UsersController < ApplicationController
   include UsersConstants
   include ErrorConstants
 
+  # GET /users
+  def index
+    @users = paginate model, page: page, per_page: per_page
+    render json: @users.map(&:facade), status: :ok
+  end
+
   # GET /users/1
   def show
-    render json: @user
+    render json: @user.facade
   end
 
   # POST /users
@@ -15,7 +21,7 @@ class UsersController < ApplicationController
 
     if @user.save
       UserMailer.welcome_email(@user).deliver_now
-      render json: @user, status: :created, location: @user
+      render json: @user.facade, status: :created
     else
       render json: @user.errors, status: :unprocessable_entity
     end
@@ -30,7 +36,7 @@ class UsersController < ApplicationController
     end
 
     if @user.update(user_params)
-      render json: @user
+      render json: @user.facade
     else
       render json: @user.errors, status: :unprocessable_entity
     end

@@ -5,10 +5,10 @@ class AuthenticationControllerTest < ActionDispatch::IntegrationTest
     @user = users(:admin)
   end
 
-  test "login should return unauthorized if email is invalid" do
+  test "login should return not_found if email is invalid" do
     post login_path, params: { email: 'invalid@email.com', password: 'password' }
 
-    assert_response 401
+    assert_response 404
     assert_json_match(error_response(ERROR_MESSAGES[:invalid_user_email] % 'invalid@email.com'), response.body)
   end
 

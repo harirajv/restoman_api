@@ -18,7 +18,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   test "should get index" do
     get users_url, headers: { 'Authorization': generate_jwt(@user) }
     assert_response 200
-    assert_json_match(User.all.map(&:as_json), response.body)
+    assert_json_match(User.all.map(&:facade), response.body)
   end
 
   test "create should return unauthorized when token is absent" do
@@ -47,7 +47,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
 
     assert_response 201
 
-    pattern = payload.merge({ id: wildcard_matcher, password_digest: wildcard_matcher, created_at: wildcard_matcher, updated_at: wildcard_matcher })
+    pattern = payload.merge({ id: wildcard_matcher, created_at: wildcard_matcher, updated_at: wildcard_matcher })
     pattern.except!(:password, :password_confirmation)
     assert_json_match(pattern, response.body)
   end
@@ -61,13 +61,13 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   test "show should return not_found if user_id is invalid" do
     get user_url(0), headers: { 'Authorization': generate_jwt(@user) }
     assert_response 404
-    assert response.parsed_body['errors'].include?(RECORD_NOT_FOUND)
+    assert_json_match(error_response(RECORD_NOT_FOUND), response.body)
   end
 
   test "should show user" do
     get user_url(@user), headers: { 'Authorization': generate_jwt(@user) }
     assert_response 200
-    assert_json_match(User.find(@user.id).as_json, response.body)
+    assert_json_match(User.find(@user.id).facade, response.body)
   end
 
   test "update should return unauthorized when token is absent" do
@@ -91,11 +91,15 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   test "update should return not_found if user_id is invalid" do
     put user_url(0), params: { name: @user.name }, headers: { 'Authorization': generate_jwt(@user) }
     assert_response 404
-    assert response.parsed_body['errors'].include?(RECORD_NOT_FOUND)
+    assert_json_match(error_response(RECORD_NOT_FOUND), response.body)
   end
 
   test "should update user" do
-    put user_url(@user), params: { name: @user.name }, headers: { 'Authorization': generate_jwt(@user) }
+    payload = { name: 'new_name' }
+    put user_url(@user), params: payload, headers: { 'Authorization': generate_jwt(@user) }
     assert_response 200
+
+    pattern = payload.merge(id: @user.id, role: @user.role, created_at: @user.created_at, updated_at: wildcard_matcher, email: @user.email)
+    assert_json_match(pattern, response.body)
   end
 end
