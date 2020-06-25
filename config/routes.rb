@@ -4,10 +4,7 @@ Rails.application.routes.draw do
     scope :api  do
       resources :dishes, only: [:index, :show, :create, :update, :destroy]
       resources :users, only: [:index, :show, :create, :update]
-      
-      resources :orders, only: [:index, :show, :create, :update] do
-        resources :order_items, only: [:index, :show, :create, :update]
-      end
+      resources :orders, only: [:index, :show, :create, :update]
     end
 
     post '/login', to: 'authentication#login'
