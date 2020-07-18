@@ -3,6 +3,7 @@ class UsersController < ApplicationController
 
   include UsersConstants
   include ErrorConstants
+  include Concerns::SwaggerDocs::UsersController
 
   # GET /users
   def index

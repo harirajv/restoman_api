@@ -9,8 +9,7 @@ class User < ApplicationRecord
 
   validates :name, :role, presence: true, on: :create
   validates :email, uniqueness: true, format: EMAIL_REGEX
-  # validates :password, length: { minimum: 8 }, if: -> { new_record? }
-  validates :password, length: { minimum: 8 }, allow_blank: true
+  validates :password, length: { minimum: 8 }, if: -> { new_record? }
 
   def generate_password_token!
     self.reset_password_token = generate_token

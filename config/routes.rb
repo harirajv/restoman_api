@@ -12,6 +12,7 @@ Rails.application.routes.draw do
     post '/reset', to: 'authentication#reset'
   end
 
+  get 'api-docs',  to: 'api_docs#index'
+
   match '*path', to: 'application#routing_error', via: :all
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
