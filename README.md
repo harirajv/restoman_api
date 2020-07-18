@@ -24,12 +24,7 @@ $ rails s
 ```
 
 ## API documentation
-The Swagger API doc JSON is rendered at the endpoint `/api-docs`.
-
-To view the docs with [Swagger UI](https://swagger.io/tools/swagger-ui/),
-- Start the app server - `restoman-api $ rails s`
-- Go to [https://petstore.swagger.io](https://petstore.swagger.io)
-- Point it to [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
+The Swagger API doc is available at [http://localhost:3000/index.html](http://localhost:3000/index.html)
 
 ## How to run the test suite
 `$ rails test test/`
