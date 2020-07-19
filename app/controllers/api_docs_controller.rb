@@ -11,9 +11,22 @@ class ApiDocsController < ActionController::Base
         key :url, 'https://opensource.org/licenses/MIT'
       end
     end
+
     tag do
       key :name, 'user'
       key :description, 'User management'
+    end
+    tag do
+      key :name, 'dish'
+      key :description, 'Dish management'
+    end
+    tag do
+      key :name, 'order'
+      key :description, 'Order operations'
+    end
+    tag do
+      key :name, 'auth'
+      key :description, 'Authentication operations'
     end
     
     key :host, 'http://localhost:3000'
@@ -27,6 +40,16 @@ class ApiDocsController < ActionController::Base
     UsersController,
     UserSchema,
     UserInput,
+    DishesController,
+    DishSchema,
+    DishInput,
+    OrdersController,
+    OrderSchema,
+    OrderInput,
+    OrderItemSchema,
+    OrderItemInput,
+    AuthenticationController,
+    LoginSchema,
     self,
   ].freeze
 

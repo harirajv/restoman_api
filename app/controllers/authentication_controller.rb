@@ -5,6 +5,7 @@ class AuthenticationController < ApplicationController
   include ActionController::ImplicitRender
   include ApplicationConstants
   include ErrorConstants
+  include Concerns::SwaggerDocs::AuthenticationController
 
   # POST /login
   def login

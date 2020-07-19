@@ -5,6 +5,7 @@ class DishesController < ApplicationController
   include ApplicationConstants
   include DishesConstants
   include ErrorConstants
+  include Concerns::SwaggerDocs::DishesController
 
   # GET /dishes/1
   def show

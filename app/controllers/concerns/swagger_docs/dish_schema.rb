@@ -1,19 +1,22 @@
-class UserSchema
+class DishSchema
   include Swagger::Blocks
 
-  swagger_schema :UserSchema do
+  swagger_schema :DishSchema do
     property :id do
       key :type, :integer
     end
     property :name do
       key :type, :string
     end
-    property :email do
+    property :description do
       key :type, :string
     end
-    property :role do
+    property :cost do
+      key :type, :number
+      key :format, :double
+    end
+    property :image do
       key :type, :string
-      key :enum, ['admin', 'chef', 'waiter']
     end
     property :created_at do
       key :type, :string

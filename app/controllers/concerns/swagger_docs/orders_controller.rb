@@ -1,51 +1,51 @@
 module Concerns
   module SwaggerDocs
-    module UsersController
+    module OrdersController
       extend ActiveSupport::Concern
 
       included do
         include Swagger::Blocks
 
-        swagger_path '/users' do
+        swagger_path '/orders' do
           operation :get do
-            key :summary, 'List of Users'
-            key :operationId, 'getUsers'
-            key :tags, ['user']
-
+            key :summary, 'List of Orders created by User'
+            key :operationId, 'getOrders'
+            key :tags, ['order']
+  
             response 200 do
-              key :description, 'Users list'
+              key :description, 'Orders created by current User'
               schema do
                 key :type, :array
                 items do
-                  key:'$ref', :UserSchema
+                  key:'$ref', :OrderSchema
                 end
               end
             end
           end
 
           operation :post do
-            key :summary, 'Create a User'
-            key :operationId, 'createUser'
-            key :tags, ['user']
+            key :summary, 'Create an Order'
+            key :operationId, 'createOrder'
+            key :tags, ['order']
 
             parameter do
               key :name, :body
               key :in, :body
-              key :description, 'User data to be created'
+              key :description, 'Order data to be created'
               key :required, true
               schema do
-                key :'$ref', :UserInput
+                key :'$ref', :OrderInput
               end
             end
 
             response 201 do
-              key :description, 'User created'
+              key :description, 'Order created'
               schema do
-                key :'$ref', :UserSchema
+                key '$ref', :OrderSchema
               end
             end
             response 403 do
-              key :description, "Insufficient privileges\nAdmin role required"
+              key :description, "Insufficient privileges\nChef cannot create order"
             end
             response 422 do
               key :description, 'Invalid parameters'
@@ -53,64 +53,62 @@ module Concerns
           end
         end
 
-        swagger_path '/users/{id}' do
+        swagger_path '/orders/{id}' do
           operation :get do
-            key :summary, 'Find a User by id'
-            key :operationId, 'findUserById'
-            key :tags, ['user']
+            key :summary, 'Find an Order by id'
+            key :operationId, 'findOrderById'
+            key :tags, ['order']
 
             parameter do
               key :name, :id
               key :in, :path
-              key :description, 'Id of User to find'
+              key :description, 'Id of Order to find'
               key :required, true
-              key :type, :integer
             end
 
             response 200 do
-              key :description, 'User found'
+              key :description, 'Order found'
               schema do
-                key :'$ref', :UserSchema
+                key '$ref', :OrderSchema
               end
             end
             response 404 do
-              key :description, 'User not found for given id'
+              key :description, 'Order not found for given id'
             end
           end
 
           operation :put do
-            key :summary, 'Update a User by id'
-            key :operationId, 'updateUser'
-            key :tags, ['user']
+            key :summary, 'Update an Order by id'
+            key :operationId, 'updateOrderById'
+            key :tags, ['order']
 
             parameter do
               key :name, :id
               key :in, :path
-              key :description, 'Id of User to update'
+              key :description, 'Id of Order to update'
               key :required, true
-              key :type, :integer
             end
             parameter do
               key :name, :body
               key :in, :body
-              key :description, 'User data to be updated'
+              key :description, 'Order data to be updated'
               key :required, true
               schema do
-                key :'$ref', :UserInput
+                key :'$ref', :OrderInput
               end
             end
 
             response 200 do
-              key :description, 'User updated'
+              key :description, 'Order updated'
               schema do
-                key :'$ref', :UserSchema
+                key '$ref', :OrderSchema
               end
             end
             response 403 do
-              key :description, "Insufficient privileges\nChef and Waiter cannot update role"
+              key :description, "Insufficient privileges\nChef can update only order items"
             end
             response 404 do
-              key :description, 'User not found for given id'
+              key :description, 'Order not found for given id'
             end
             response 422 do
               key :description, 'Invalid parameters'

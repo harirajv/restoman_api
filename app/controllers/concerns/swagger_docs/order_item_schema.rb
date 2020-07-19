@@ -1,19 +1,19 @@
-class UserSchema
+class OrderItemSchema
   include Swagger::Blocks
 
-  swagger_schema :UserSchema do
+  swagger_schema :OrderItemSchema do
     property :id do
       key :type, :integer
     end
-    property :name do
-      key :type, :string
+    property :dish_id do
+      key :type, :integer
     end
-    property :email do
-      key :type, :string
+    property :quantity do
+      key :type, :integer
     end
-    property :role do
+    property :status do
       key :type, :string
-      key :enum, ['admin', 'chef', 'waiter']
+      key :enum, ['preparing', 'completed', 'cancelled']
     end
     property :created_at do
       key :type, :string

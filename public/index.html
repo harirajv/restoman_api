@@ -41,6 +41,7 @@
       const ui = SwaggerUIBundle({
         url: "http://localhost:3000/api-docs",
         dom_id: '#swagger-ui',
+        defaultModelsExpandDepth: -1,
         deepLinking: true,
         presets: [
           SwaggerUIBundle.presets.apis,

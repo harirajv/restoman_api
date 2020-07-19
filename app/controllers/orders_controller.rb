@@ -5,6 +5,7 @@ class OrdersController < ApplicationController
   include ActionController::ImplicitRender
   include ApplicationConstants
   include OrderItemsConcern
+  include Concerns::SwaggerDocs::OrdersController
 
   # GET /orders/1
   def show
@@ -61,11 +62,13 @@ class OrdersController < ApplicationController
       when :create
         params.require(:order_items).map { |param| param.permit(:dish_id, :quantity) }
       when :update
+        # TODO order items status update
         params.require(:order_items).map { |param| param.permit(:id, :dish_id, :quantity) }
       end
     end
 
     def validate_user
+      # TODO chef must be able to update order items status
       render json: { errors: [ErrorConstants::ERROR_MESSAGES[:not_privileged]] }, status: :forbidden if @current_user.chef?
     end
 end

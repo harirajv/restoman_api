@@ -16,7 +16,8 @@ class UserInput
       key :type, :string
     end
     property :role do
-      key :type, :integer
+      key :type, :string
+      key :enum, ['admin', 'chef', 'waiter']
     end
   end
 end
