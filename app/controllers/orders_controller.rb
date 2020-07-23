@@ -1,8 +1,8 @@
 class OrdersController < ApplicationController
   before_action :validate_user, only: [:create, :update]
 
-  include ActionController::ImplicitRender
   include ApplicationConstants
+  include OrdersConstants
   include OrderItemsConcern
   include Concerns::SwaggerDocs::OrdersController
 
@@ -23,8 +23,7 @@ class OrdersController < ApplicationController
       @order = @current_user.orders.create!(table_no: order_params[:table_no])
       add_order_items(@order, order_items_params)
     end
-    @order_items = @order.order_items.reload
-    render status: :created
+    render json: @order.to_json(include: :order_items), status: :created
   rescue => e
     Rails.logger.error "Order create failed: #{e.message}, backtrace: #{e.backtrace}"
     render json: { errors: e.message }, status: :unprocessable_entity
@@ -36,7 +35,7 @@ class OrdersController < ApplicationController
       @order.update(order_params)
       update_order_items(@order, order_items_params) if params[:order_items]
     end
-    @order_items = @order.order_items.reload
+    render json: @order.to_json(include: :order_items), status: :ok
   rescue => e
     Rails.logger.error "Order update failed: #{e.message}, backtrace: #{e.backtrace}"
     render json: { errors: e.message }, status: :unprocessable_entity
@@ -47,29 +46,13 @@ class OrdersController < ApplicationController
       Order
     end
 
-    # Use callbacks to share common setup or constraints between actions.
-    def set_order
-      @order = Order.find(params[:id])
-    end
-
     # Only allow a trusted parameter "white list" through.
     def order_params
-      case action_name.to_sym
-      when :create
-        params.permit(:table_no)
-      when :update
-        params.permit(:table_no, :is_active)
-      end
+      params.permit(ORDER_PERMITTED_PARAMS[action_name])
     end
 
     def order_items_params
-      case action_name.to_sym
-      when :create
-        params.require(:order_items).map { |param| param.permit(:dish_id, :quantity) }
-      when :update
-        # TODO order items status update
-        params.require(:order_items).map { |param| param.permit(:id, :dish_id, :quantity) }
-      end
+      params.require(:order_items).map { |param| param.permit(ORDER_ITEM_PERMITTED_PARAMS[action_name]) }
     end
 
     def validate_user
