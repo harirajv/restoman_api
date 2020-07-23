@@ -1,5 +1,4 @@
 class OrdersController < ApplicationController
-  before_action :set_order, only: [:show, :update]
   before_action :validate_user, only: [:create, :update]
 
   include ActionController::ImplicitRender
@@ -7,9 +6,15 @@ class OrdersController < ApplicationController
   include OrderItemsConcern
   include Concerns::SwaggerDocs::OrdersController
 
+  # GET /orders
+  def index
+    orders = paginate Order.includes(:order_items), page: page, per_page: per_page
+    render json: orders.to_json(:include => :order_items), status: :ok
+  end
+
   # GET /orders/1
   def show
-    render json: @order
+    render json: @order.to_json(include: :order_items), status: :ok
   end
 
   # POST /orders

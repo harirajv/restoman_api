@@ -18,7 +18,8 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
   test "should get index" do
     get orders_url, headers: { 'Authorization': generate_jwt(@user) }
     assert_response 200
-    assert_json_match(Order.all.map(&:as_json), response.body)
+    orders_response = JSON.parse(Order.includes(:order_items).to_json(include: :order_items))
+    assert_equal [], (orders_response - response.parsed_body)
   end
 
   test "create should return unauthorized when token is absent" do
@@ -63,7 +64,7 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
   test "should show order" do
     get order_url(@order), headers: { 'Authorization': generate_jwt(@user) }
     assert_response 200
-    assert_json_match(Order.find(@order.id).as_json, response.body)
+    assert_json_match(Order.find(@order.id).as_json(include: :order_items), response.body)
   end
 
   test "update should return unauthorized when token is absent" do
