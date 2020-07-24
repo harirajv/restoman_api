@@ -73,9 +73,14 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     assert_json_match(error_response(ERROR_MESSAGES[:nil_token]), response.body)
   end
 
-  test "update should return forbidden if current user is chef" do
+  test "update should return forbidden if status update is not authorized for user" do
     chef = users(:chef)
-    post orders_url, params: { is_active: @order.is_active, table_no: @order.table_no }, headers: { 'Authorization': generate_jwt(chef) }
+    put order_url(@order), params: { order_items: [{ id: @order.order_items.first.id, status: :cancelled }] }, headers: { Authorization: generate_jwt(chef) }
+    assert_response 403
+    assert_json_match(error_response(ERROR_MESSAGES[:not_privileged]), response.body)
+
+    waiter = users(:waiter)
+    put order_url(@order), params: { order_items: [{ id: @order.order_items.first.id, status: :completed }] }, headers: { Authorization: generate_jwt(waiter) }
     assert_response 403
     assert_json_match(error_response(ERROR_MESSAGES[:not_privileged]), response.body)
   end

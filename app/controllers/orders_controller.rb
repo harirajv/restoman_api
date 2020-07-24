@@ -52,11 +52,18 @@ class OrdersController < ApplicationController
     end
 
     def order_items_params
-      params.require(:order_items).map { |param| param.permit(ORDER_ITEM_PERMITTED_PARAMS[action_name]) }
+      params[:order_items].kind_of?(Array) && params.require(:order_items).map { |param| param.permit(ORDER_ITEM_PERMITTED_PARAMS[action_name]) }
     end
 
     def validate_user
-      # TODO chef must be able to update order items status
-      render json: { errors: [ErrorConstants::ERROR_MESSAGES[:not_privileged]] }, status: :forbidden if @current_user.chef?
+      unauthorized = case action_name
+      when 'create'
+        @current_user.chef?
+      when 'update'
+        params[:order_items] && order_items_params.any? { |data| data[:status].present? && 
+                                                                unauthorized_status_update?(@current_user, data[:status]) }
+      end
+
+      render json: { errors: [ErrorConstants::ERROR_MESSAGES[:not_privileged]] }, status: :forbidden if unauthorized
     end
 end

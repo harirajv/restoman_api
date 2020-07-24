@@ -6,6 +6,6 @@ module OrdersConstants
 
   ORDER_ITEM_PERMITTED_PARAMS = {
     create: %i(dish_id quantity),
-    update: %i(id dish_id quantity)
+    update: %i(id dish_id quantity status)
   }.with_indifferent_access.freeze
 end.freeze
