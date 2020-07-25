@@ -29,15 +29,14 @@ class ApplicationController < ActionController::API
     end
 
     def authenticate!
-      return @current_user if @current_user.present?
+      @token = request.headers['Authorization'].present? ? request.headers['Authorization'].split(' ').last : nil
+      @decoded = JsonWebToken.decode(@token)
+      render json: { errors: [ErrorConstants::ERROR_MESSAGES[:logged_out]] }, status: :unauthorized and return unless Redis.current.get(@token)
 
-      header = request.headers['Authorization'].present? ? request.headers['Authorization'].split(' ').last : nil
-      begin
-        @decoded = JsonWebToken.decode(header)
-        @current_user = User.find(@decoded[:user_id])
-      rescue ActiveRecord::RecordNotFound, JWT::DecodeError => e
-        render json: { errors: [e.message] }, status: :unauthorized
-      end
+      @current_user = User.find(@decoded[:user_id])
+      Redis.current.expire(@token, JWT_EXPIRY_TIME)
+    rescue ActiveRecord::RecordNotFound, JWT::DecodeError => e
+      render json: { errors: [e.message] }, status: :unauthorized
     end
 
     # Pagination parameter: page number

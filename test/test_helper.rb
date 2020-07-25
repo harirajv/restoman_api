@@ -13,7 +13,9 @@ class ActiveSupport::TestCase
   private
 
     def generate_jwt(user)
-      JsonWebToken.encode({user_id: user.id, role:user.role})
+      token = JsonWebToken.encode({user_id: user.id, role:user.role})
+      Redis.current.set(token, @user.id)
+      token
     end
 
     def error_response(error)

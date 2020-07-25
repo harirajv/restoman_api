@@ -7,6 +7,7 @@ module ErrorConstants
     invalid_user_email: "User with email: %s doesn't exist",
     invalid_password: "Password is invalid",
     is_invalid: "is invalid",
+    logged_out: 'You are logged out. Please login again.',
     nil_token: "Nil JSON web token",
     not_privileged: "Insufficient privileges",
     record_not_found: "Couldn't find %s with '%s'=%s",

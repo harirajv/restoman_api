@@ -1,8 +1,7 @@
 class AuthenticationController < ApplicationController
-  skip_before_action :authenticate!, on: [:login, :forgot, :reset]
-  before_action :set_user, on: [:login, :forgot, :reset]
+  skip_before_action :authenticate!, only: [:login, :forgot, :reset]
+  before_action :set_user, only: [:login, :forgot, :reset]
 
-  include ActionController::ImplicitRender
   include ApplicationConstants
   include ErrorConstants
   include Concerns::SwaggerDocs::AuthenticationController
@@ -11,6 +10,8 @@ class AuthenticationController < ApplicationController
   def login
     if @user.authenticate(login_params[:password])
       @token = JsonWebToken.encode({ user_id: @user.id, role: @user.role })
+      Redis.current.set(@token, @user.id)
+      Redis.current.expire(@token, JWT_EXPIRY_TIME)
       render status: :ok
     else
       render json: { errors: [ERROR_MESSAGES[:invalid_password]] }, status: :unauthorized
@@ -35,6 +36,11 @@ class AuthenticationController < ApplicationController
     render json: {}, status: :ok
   rescue => e
       render json: { errors: [e.message] }, status: :unprocessable_entity
+  end
+
+  def logout
+    Redis.current.del(@token)
+    head :no_content
   end
 
   private

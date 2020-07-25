@@ -109,6 +109,18 @@ module Concerns
             end
           end
         end
+
+        swagger_path '/users/logout' do
+          operation :put do
+            key :summary, 'Logs out current User'
+            key :operationId, 'logout'
+            key :tags, ['auth']
+
+            response 204 do
+              key :description, 'Logout completed'
+            end
+          end
+        end
       end
     end
   end

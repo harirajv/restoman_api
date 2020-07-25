@@ -10,6 +10,7 @@ Rails.application.routes.draw do
     post '/login', to: 'authentication#login'
     post '/forgot', to: 'authentication#forgot'
     post '/reset', to: 'authentication#reset'
+    put '/logout', to: 'authentication#logout'
   end
 
   get 'api-docs',  to: 'api_docs#index'

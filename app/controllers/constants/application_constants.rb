@@ -4,7 +4,7 @@ module ApplicationConstants
     page: 1
   }.freeze
 
-  JWT_EXPIRY_TIME = 24.hours.freeze
+  JWT_EXPIRY_TIME = 30.minutes.freeze
 
   RESET_PASSWORD_TOKEN_EXPIRY_TIME = 1.hour.freeze
 
