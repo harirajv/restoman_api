@@ -94,7 +94,7 @@ module Concerns
               key :description, 'Order data to be updated'
               key :required, true
               schema do
-                key :'$ref', :OrderInput
+                key :'$ref', :OrderUpdateInput
               end
             end
 
