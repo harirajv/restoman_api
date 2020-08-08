@@ -5,6 +5,10 @@ Ruby 2.6.6
 
 ## System dependencies
 MySQL 5.7
+Redis 6.0.5-alpine
+
+# Starting the dependency services
+`$ docker-compose up`
 
 ## Database creation
 `$ rails db:create db:migrate`
