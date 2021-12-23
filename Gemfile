@@ -41,9 +41,13 @@ gem 'api-pagination', '~> 4.8.2'
 # Bulk insert data without N+1 insert problem
 gem 'activerecord-import', '~> 1.0.5'
 
+# Attribute wise serialization for JSON responses
+gem 'active_model_serializers'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  gem 'deprecation_toolkit'
 end
 
 group :development do
