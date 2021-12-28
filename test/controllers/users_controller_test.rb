@@ -1,6 +1,7 @@
 require 'test_helper'
 
 class UsersControllerTest < ActionDispatch::IntegrationTest
+  include ActionMailer::TestHelper
   include ErrorConstants
 
   RECORD_NOT_FOUND = ERROR_MESSAGES[:record_not_found] % ['User', 'id', 0].freeze
@@ -41,8 +42,10 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
 
   test "should create user" do
     payload = { name: @user.name, role: @user.role, email: 'new@email.com', password: 'password', password_confirmation: 'password' }
-    assert_difference('User.count') do
-      post users_url, params: payload, headers: { 'Authorization': generate_jwt(@user) }
+    assert_emails 1 do
+      assert_difference('User.count') do
+        post users_url, params: payload, headers: { 'Authorization': generate_jwt(@user) }
+      end
     end
 
     assert_response 201

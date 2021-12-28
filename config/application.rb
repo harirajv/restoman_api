@@ -32,16 +32,8 @@ module RestomanApi
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
-    config.eager_load_paths += Dir["#{config.root}/app/**/*"]
-    config.autoload_paths << Rails.root.join('lib')
-
-    config.middleware.insert_before 0, Rack::Cors do
-      allow do
-        origins '*'
-        resource '*', headers: :any, methods: [:get, :post, :put, :delete], 
-        expose: ['Link', 'Page', 'Per-Page', 'Total']
-      end
-    end
+    # Autoload controller constants for all environments
+    config.autoload_paths += [Rails.root.join('app/controllers/constants'), Rails.root.join('lib')]
 
     config.mailer = config_for(:mailer)
   end
