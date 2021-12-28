@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.6.6'
+ruby '2.7.2'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.2.6'
@@ -12,11 +12,11 @@ gem 'mysql2'
 # Use Puma as the app server
 gem 'puma', '5.5.2'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem 'jbuilder', '~> 2.5'
+gem 'jbuilder'
 # Use Redis adapter to run Action Cable in production
-gem 'redis', '~> 4.0'
+gem 'redis'
 # Use ActiveModel has_secure_password
-gem 'bcrypt', '~> 3.1.7'
+gem 'bcrypt'
 
 gem 'jwt'
 
@@ -33,13 +33,13 @@ gem 'bootsnap', '>= 1.1.0', require: false
 gem 'rack-cors', '~> 1.1.1'
 
 # Paginator
-gem 'will_paginate', '~> 3.1.0'
+gem 'will_paginate'
 
 # Pagination details and links in header
-gem 'api-pagination', '~> 4.8.2'
+gem 'api-pagination'
 
 # Bulk insert data without N+1 insert problem
-gem 'activerecord-import', '~> 1.0.5'
+gem 'activerecord-import'
 
 # Attribute wise serialization for JSON responses
 gem 'active_model_serializers'
