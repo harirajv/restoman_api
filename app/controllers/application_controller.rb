@@ -29,7 +29,7 @@ class ApplicationController < ActionController::API
     end
 
     def authenticate!
-      @token = request.headers['Authorization'].present? ? request.headers['Authorization'].split(' ').last : nil
+      @token = request.headers['Authorization']
       @decoded = JsonWebToken.decode(@token)
       render json: { errors: [ErrorConstants::ERROR_MESSAGES[:logged_out]] }, status: :unauthorized and return unless Redis.current.get(@token)
 

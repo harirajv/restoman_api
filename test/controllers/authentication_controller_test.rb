@@ -25,7 +25,7 @@ class AuthenticationControllerTest < ActionDispatch::IntegrationTest
     post login_path, params: { email: @user.email, password: 'password' }
     
     assert_response 200
-    pattern = { user_id: @user.id, user_role: @user.role, token: wildcard_matcher }
+    pattern = { user: @user.facade, token: wildcard_matcher }
     assert_json_match(pattern, response.body)
   end
 
@@ -78,15 +78,18 @@ class AuthenticationControllerTest < ActionDispatch::IntegrationTest
     assert_response 200
   end
 
-  test "logout should return unauthorized if token is absent" do
-    put logout_path
-    assert_response 401
-    assert_json_match(error_response(ErrorConstants::ERROR_MESSAGES[:nil_token]), response.body)
+  test "logout should return reset_content if token is absent or expired or has invalid format" do
+    delete logout_path
+    assert_response 205
+
+    expired_token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE2NDA3MTA4MDEsImV4cCI6MTY0MDcxMjYwMX0.uR5mX8LOVhhVioowj2RuP6yjw4ObgzEXLsC0eom6fHU"
+    delete logout_path, headers: { Authorization: expired_token }
+    assert_response 205
   end
 
   test "logout should cause all further requests to return unauthorized" do
     token = generate_jwt(@user)
-    put logout_path, headers: { Authorization: token }
+    delete logout_path, headers: { Authorization: token }
     assert_response 204
 
     get users_url, headers: { 'Authorization': token }

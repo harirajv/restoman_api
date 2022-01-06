@@ -1,5 +1,4 @@
 class AuthenticationController < ApplicationController
-  skip_before_action :authenticate!, only: [:login, :forgot, :reset]
   before_action :set_user, only: [:login, :forgot, :reset]
 
   include ApplicationConstants
@@ -12,7 +11,7 @@ class AuthenticationController < ApplicationController
       @token = JsonWebToken.encode({ user_id: @user.id, role: @user.role })
       Redis.current.set(@token, @user.id)
       Redis.current.expire(@token, JWT_EXPIRY_TIME)
-      render status: :ok
+      render json: { user: @user.facade, token: @token }, status: :ok
     else
       render json: { errors: [ERROR_MESSAGES[:invalid_password]] }, status: :unauthorized
     end
@@ -40,6 +39,7 @@ class AuthenticationController < ApplicationController
 
   def logout
     Redis.current.del(@token)
+    Rails.logger.info "#{@current_user.email} has logged out"
     head :no_content
   end
 
@@ -59,5 +59,16 @@ class AuthenticationController < ApplicationController
         render json: { errors: [ERROR_MESSAGES[:invalid_user_email] % login_params[:email]] }, status: :not_found
         return
       end
+    end
+
+    def authenticate!
+      return unless action_name == 'logout'
+
+      @token = request.headers['Authorization']
+      @decoded = JsonWebToken.decode(@token)
+      @current_user = User.find(@decoded[:user_id]) if @decoded
+    rescue => e
+      Rails.logger.error "JWT decode failed - #{e.message} token - #{@token}"
+      head :reset_content
     end
 end
