@@ -13,13 +13,22 @@ class UserTest < ActiveSupport::TestCase
     assert user.errors[:role].include?(ERROR_MESSAGES[:cant_be_blank])
   end
 
-  test 'email is of valid format' do
+  test 'email is not mandatory' do
     user = User.new(name: 'user1', role: 'admin', password: '12345678')
-    refute user.valid?
+    assert user.valid?
+  end
 
+  test 'email is of valid format' do
     user = User.new(name: 'user1', role: 'admin', email: 'invalid_email', password: '12345678')
     refute user.valid?
     assert user.errors[:email].include?(ERROR_MESSAGES[:is_invalid])
+  end
+
+  test 'email uniqueness is case insensitive' do
+    existing_user = User.create!(name: 'user1', email: 'UsEr@email.com', role: 'admin', password: '12345678')
+    new_user = User.new(name: 'user2', email: 'user@email.com', role: 'admin', password: '12345678')
+    refute new_user.valid?
+    assert_equal 'has already been taken', new_user.errors.messages[:email].first
   end
 
   test 'password minimun length must be 8' do

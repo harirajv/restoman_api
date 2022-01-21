@@ -8,7 +8,7 @@ class User < ApplicationRecord
   has_secure_password
 
   validates :name, :role, presence: true, on: :create
-  validates :email, uniqueness: true, format: EMAIL_REGEX
+  validates :email, uniqueness: { case_sensitive: false }, format: EMAIL_REGEX, if: -> { email.present? }
   validates :password, length: { minimum: 8 }, if: -> { new_record? }
 
   def generate_password_token!
