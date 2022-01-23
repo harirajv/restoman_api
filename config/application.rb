@@ -36,5 +36,8 @@ module RestomanApi
     config.autoload_paths += [Rails.root.join('app/controllers/constants'), Rails.root.join('lib')]
 
     config.mailer = config_for(:mailer)
+
+    # Raise ActionController::UnpermittedParameters exception when parameters that are not explicitly permitted are found
+    config.action_controller.action_on_unpermitted_parameters = :raise
   end
 end

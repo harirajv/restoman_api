@@ -1,9 +1,8 @@
 class UsersController < ApplicationController
-  before_action :validate_user, only: [:create, :update]
-
-  include UsersConstants
   include ErrorConstants
   include Concerns::SwaggerDocs::UsersController
+
+  wrap_parameters :user, include: [:name, :role, :email, :password, :password_confirmation]
 
   # GET /users
   def index
@@ -30,12 +29,6 @@ class UsersController < ApplicationController
 
   # PUT /users/1
   def update
-    unallowed_fields = user_params.keys - UPDATE_ALLOWED_FIELDS[@current_user.role]
-    if unallowed_fields.present?
-      render json: { errors: [ERROR_MESSAGES[:update_not_allowed] % unallowed_fields.join(', ')] }, status: :forbidden
-      return
-    end
-
     if @user.update(user_params)
       render json: @user.facade
     else
@@ -49,13 +42,12 @@ class UsersController < ApplicationController
       User
     end
 
-    # Only allow a trusted parameter "white list" through.
-    def user_params
-      params.permit(:name, :role, :email, :password, :password_confirmation)
+    def write_actions
+      %i(create update)
     end
 
-    def validate_user
-      render json: { errors: [ERROR_MESSAGES[:not_privileged]] },
-              status: :forbidden if RESTRICTED_ACTIONS[@current_user.role].include?(action_name)
+    # Only allow a trusted parameter "white list" through.
+    def user_params
+      params.require(:user).permit(:name, :role, :email, :password, :password_confirmation)
     end
 end

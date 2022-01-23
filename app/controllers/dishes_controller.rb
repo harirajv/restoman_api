@@ -1,10 +1,4 @@
 class DishesController < ApplicationController
-  # before_action :set_dish, only: [:show, :update, :destroy]
-  before_action :validate_user, only: [:create, :update, :destroy]
-
-  include ApplicationConstants
-  include DishesConstants
-  include ErrorConstants
   include Concerns::SwaggerDocs::DishesController
 
   # GET /dishes/1
@@ -25,12 +19,6 @@ class DishesController < ApplicationController
 
   # PUT /dishes/1
   def update
-    unallowed_fields = dish_params.keys - UPDATE_ALLOWED_FIELDS[@current_user.role]
-    if unallowed_fields.present?
-      render json: { errors: [ERROR_MESSAGES[:update_not_allowed] % unallowed_fields.join(', ')] }, status: :forbidden
-      return
-    end
-    
     if @dish.update(dish_params)
       render json: @dish
     else
@@ -48,20 +36,28 @@ class DishesController < ApplicationController
     def model
       Dish
     end
+    
+    def chef_permitted_write_actions
+      %i(update)
+    end
+
+    def permitted_update_fields
+      case @current_user.role.to_sym
+      when :admin
+        %i(name description cost image is_active)
+      when :chef
+        %i(is_active)
+      end
+    end
 
     # Use callbacks to share common setup or constraints between actions.
     # Only allow a trusted parameter "white list" through.
     def dish_params
       case action_name.to_sym
       when :create
-        params.permit(:name, :description, :cost, :image)
+        params.require(:dish).permit(:name, :description, :cost, :image)
       when :update
-        params.permit(:name, :description, :cost, :image, :is_active)
+        params.require(:dish).permit(*permitted_update_fields)
       end
-    end    
-
-    def validate_user
-      render json: { errors: [ERROR_MESSAGES[:not_privileged]] },
-             status: :forbidden if RESTRICTED_ACTIONS[@current_user.role].include?(action_name)
     end
 end

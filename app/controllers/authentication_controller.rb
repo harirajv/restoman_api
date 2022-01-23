@@ -50,7 +50,7 @@ class AuthenticationController < ApplicationController
     end
 
     def login_params
-      params.permit(:email, :password, :token)
+      params.require(:authentication).permit(:email, :password, :password_confirmation, :token)
     end
 
     def set_user

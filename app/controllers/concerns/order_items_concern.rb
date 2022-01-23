@@ -16,12 +16,4 @@ module OrderItemsConcern
     add_order_items(order, new_items)
     modify_order_items(order, existing_items)
   end
-
-  def unauthorized_status_update?(user, status)
-    # Chef can only set OrderItem status to completed
-    # Waiter cannot set OrderItem status to completed
-    return true if (user.chef? && status != 'completed') ||
-                    (user.waiter? && status == 'completed')
-    false
-  end
 end
