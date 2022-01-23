@@ -1,6 +1,6 @@
 class OrdersController < ApplicationController
   include OrderItemsConcern
-  include Concerns::SwaggerDocs::OrdersController
+  include SwaggerDocs::OrdersController
 
   before_action :validate_status_update, only: :update
   

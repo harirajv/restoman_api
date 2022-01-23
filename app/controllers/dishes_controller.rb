@@ -1,5 +1,5 @@
 class DishesController < ApplicationController
-  include Concerns::SwaggerDocs::DishesController
+  include SwaggerDocs::DishesController
 
   # GET /dishes/1
   def show

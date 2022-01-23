@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   include ErrorConstants
-  include Concerns::SwaggerDocs::UsersController
+  include SwaggerDocs::UsersController
 
   wrap_parameters :user, include: [:name, :role, :email, :password, :password_confirmation]
 

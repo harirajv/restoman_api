@@ -3,7 +3,7 @@ class AuthenticationController < ApplicationController
 
   include ApplicationConstants
   include ErrorConstants
-  include Concerns::SwaggerDocs::AuthenticationController
+  include SwaggerDocs::AuthenticationController
 
   # POST /login
   def login
