@@ -32,9 +32,6 @@ module RestomanApi
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
-    # Autoload controller constants for all environments
-    config.autoload_paths += [Rails.root.join('app/controllers/constants'), Rails.root.join('lib')]
-
     config.mailer = config_for(:mailer)
 
     # Raise ActionController::UnpermittedParameters exception when parameters that are not explicitly permitted are found
