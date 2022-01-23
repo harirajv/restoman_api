@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class AuthenticationControllerTest < ActionDispatch::IntegrationTest
-  include ActiveJob::TestHelper
+  include ActionMailer::TestHelper
 
   setup do
     @user = users(:admin)
@@ -37,7 +37,7 @@ class AuthenticationControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "forgot should reset password token and send password reset email" do
-    assert_enqueued_with(job: UserMailer.delivery_job, args: [ 'UserMailer', 'reset_password_email', 'deliver_now', @user], queue: 'mailers') do
+    assert_enqueued_emails 1 do
       post forgot_path, params: { email: @user.email }, as: :json
     end
 
