@@ -7,12 +7,12 @@ class UsersController < ApplicationController
   # GET /users
   def index
     @users = paginate model, page: page, per_page: per_page
-    render json: @users, status: :ok
+    render json: @users.map(&:facade), status: :ok
   end
 
   # GET /users/1
   def show
-    render json: @user
+    render json: @user.facade
   end
 
   # POST /users
