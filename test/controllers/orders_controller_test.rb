@@ -126,11 +126,6 @@ class OrdersControllerTest < ActionDispatch::IntegrationTest
     end
     
     assert_response 200
-    
-    pattern = payload.merge({ id: @order.id, is_active: true, user_id: @user.id, created_at: @order.created_at, updated_at: wildcard_matcher })
-    pattern[:order_items][0].merge! ({ order_id: @order.id, status: order_items(:one).status, created_at: order_items(:one).created_at, updated_at: wildcard_matcher })
-    pattern[:order_items][1].merge! ({ id: wildcard_matcher, order_id: @order.id,  status: OrderItem.statuses.first[0], created_at: wildcard_matcher, updated_at: wildcard_matcher })
-    
-    assert_json_match(pattern, response.body)
+    assert_equal @order.reload.as_json(include: :order_items), response.parsed_body
   end
 end

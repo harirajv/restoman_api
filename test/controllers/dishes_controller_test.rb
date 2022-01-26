@@ -107,7 +107,8 @@ class DishesControllerTest < ActionDispatch::IntegrationTest
     payload = { cost: @new_dish.cost, description: @new_dish.description, image: @new_dish.image, name: @new_dish.name, is_active: false }
     put dish_url(@dish), params: payload, headers: { 'Authorization': generate_jwt(@user) }, as: :json
     assert_response 200
-    pattern = payload.merge({id: @dish.id, created_at: @dish.created_at, updated_at: wildcard_matcher})
+    @dish.reload
+    pattern = payload.merge({id: @dish.id, created_at: @dish.created_at.as_json, updated_at: @dish.updated_at.as_json})
     assert_json_match(pattern, response.body)
   end
 

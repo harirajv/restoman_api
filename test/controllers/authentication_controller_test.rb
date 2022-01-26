@@ -25,8 +25,9 @@ class AuthenticationControllerTest < ActionDispatch::IntegrationTest
     post login_path, params: { email: @user.email, password: 'password' }, as: :json
     
     assert_response 200
-    pattern = { user: @user.facade, token: wildcard_matcher }
+    pattern = { user: @user.facade.as_json, token: wildcard_matcher }
     assert_json_match(pattern, response.body)
+    assert_equal @user.id.to_s, Redis.current.get(response.parsed_body['token'])
   end
 
   test "forgot should return not_found if email is invalid" do

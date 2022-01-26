@@ -7,7 +7,7 @@ class OrdersController < ApplicationController
   # GET /orders
   def index
     orders = paginate Order.includes(:order_items), page: page, per_page: per_page
-    render json: orders.to_json(:include => :order_items), status: :ok
+    render json: orders.to_json(include: :order_items), status: :ok
   end
 
   # GET /orders/1

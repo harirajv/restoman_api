@@ -19,7 +19,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   test "should get index" do
     get users_url, headers: { 'Authorization': generate_jwt(@user) }, as: :json
     assert_response 200
-    assert_json_match(User.all.map(&:facade), response.body)
+    assert_equal User.all.map(&:facade).as_json, response.parsed_body
   end
 
   test "create should return unauthorized when token is absent" do
@@ -76,7 +76,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   test "should show user" do
     get user_url(@user), headers: { 'Authorization': generate_jwt(@user) }, as: :json
     assert_response 200
-    assert_json_match(User.find(@user.id).facade, response.body)
+    assert_equal @user.facade.as_json, response.parsed_body
   end
 
   test "update should return unauthorized when token is absent" do
@@ -121,8 +121,8 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     payload = { name: 'new_name' }
     put user_url(@user), params: payload, headers: { 'Authorization': generate_jwt(@user) }, as: :json
     assert_response 200
-
-    pattern = payload.merge(id: @user.id, role: @user.role, created_at: @user.created_at, updated_at: wildcard_matcher, email: @user.email)
+    @user.reload
+    pattern = payload.merge(id: @user.id, role: @user.role, created_at: @user.created_at.as_json, updated_at: @user.updated_at.as_json, email: @user.email)
     assert_json_match(pattern, response.body)
   end
 end
