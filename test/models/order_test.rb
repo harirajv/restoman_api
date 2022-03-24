@@ -4,7 +4,7 @@ class OrderTest < ActiveSupport::TestCase
   test 'table_no must be positive' do
     order = Order.new(table_no: -1)
     refute order.valid?
-    assert order.errors[:table_no].include?(ERROR_MESSAGES[:greater_than_equal_integer] % 1)
+    assert order.errors.added? :table_no, :greater_than_or_equal_to, value: -1, count: 1
   end
 
   test 'is_active default value is true' do

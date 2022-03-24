@@ -4,7 +4,7 @@ class OrderItemTest < ActiveSupport::TestCase
   test "quantity is mandatory" do
     order_item = OrderItem.new(dish_id: Dish.first.id, order_id: Order.first.id)
     refute order_item.valid?
-    assert order_item.errors[:quantity].include?(ERROR_MESSAGES[:cant_be_blank])
+    assert order_item.errors.added? :quantity, :blank
   end
 
   test "minimum quantity value is 1" do
@@ -13,7 +13,7 @@ class OrderItemTest < ActiveSupport::TestCase
 
     order_item = OrderItem.new(dish_id: Dish.first.id, order_id: Order.first.id, status: OrderItem.statuses[:preparing], quantity: 0)
     refute order_item.valid?
-    assert order_item.errors[:quantity].include?(ERROR_MESSAGES[:greater_than_equal_integer] % 1)
+    assert order_item.errors.added? :quantity, :greater_than_or_equal_to, value: 0, count: 1
   end
 
   test "quantity and status cannot be updated at same time" do
