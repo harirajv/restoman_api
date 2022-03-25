@@ -6,7 +6,14 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-Dish.create!([
+Account.create!(
+  {
+    name: 'Dream Restaurant',
+    subdomain: 'localhost'
+  }
+)
+
+Account.first.dishes.create!([
   {
     name: 'Idli',
     description: 'South Indian steamed cake of rice served with sambhar',
@@ -21,7 +28,7 @@ Dish.create!([
   }
 ])
 
-User.create!([
+Account.first.users.create!([
   {
     name: 'admin',
     role: 'admin',
@@ -31,14 +38,14 @@ User.create!([
   }
 ])
 
-Order.create!([
+Account.first.orders.create!([
   {
     table_no: 1,
     user_id: User.first.id
   }
 ])
 
-OrderItem.create!([
+Account.first.orders.first.order_items.create!([
   {
     dish_id: Dish.first.id,
     order_id: Order.first.id,
@@ -46,10 +53,10 @@ OrderItem.create!([
   }
 ])
 
-Bill.create!([
+Account.first.orders.first.create_bill!(
   {
     order_id: Order.first.id,
     cost: 150,
     payment_mode: 0
   }
-])
+)

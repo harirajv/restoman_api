@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::API
+  before_action :set_account
   before_action :authenticate!, except: :routing_error
   before_action :set_record, only: [:show, :update, :destroy]
   before_action :set_response_headers, only: :index
@@ -32,18 +33,30 @@ class ApplicationController < ActionController::API
       raise NoMethodError, 'model method must be overriden'
     end
 
-    def set_record
-      instance_variable_set("@#{model.to_s.underscore}", model.find(params[:id]))
+    def set_account
+      @current_account = Account.find_by_subdomain! request.subdomain
     rescue ActiveRecord::RecordNotFound => e
-      render json: { errors: [ErrorConstants::ERROR_MESSAGES[:record_not_found] % [model, 'id', params[:id]]] }, status: :not_found
+      render json: { errors: [ErrorConstants::ERROR_MESSAGES[:record_not_found] % [Account, 'subdomain', request.subdomain]] }, status: :not_found
+    end
+
+    def set_record
+      instance_variable_set("@#{model.name.underscore}", model.find(params[:id]))
+    rescue ActiveRecord::RecordNotFound => e
+      render json: { errors: [ErrorConstants::ERROR_MESSAGES[:record_not_found] % [model.name, 'id', params[:id]]] }, status: :not_found
     end
 
     def authenticate!
       @token = request.headers['Authorization']
       @decoded = JsonWebToken.decode(@token)
-      render json: { errors: [ErrorConstants::ERROR_MESSAGES[:logged_out]] }, status: :unauthorized and return unless Redis.current.get(@token)
+      redis_account_id = Redis.current.get(@token)
+      if redis_account_id.nil?
+        render json: { errors: [ErrorConstants::ERROR_MESSAGES[:logged_out]] }, status: :unauthorized and return
+      elsif redis_account_id != @current_account.id.to_s
+        Rails.logger.error "Account id in token - #{redis_account_id} does not match with account id of subdomain - #{@current_account.id}"
+        render json: { errors: [ERROR_MESSAGES[:token_invalid]] }, status: :unauthorized and return
+      end
 
-      @current_user = User.find(@decoded[:user_id])
+      @current_user = @current_account.users.find(@decoded[:user_id])
       Redis.current.expire(@token, JWT_EXPIRY_TIME)
     rescue ActiveRecord::RecordNotFound, JWT::DecodeError => e
       render json: { errors: [e.message] }, status: :unauthorized

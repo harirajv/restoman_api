@@ -17,7 +17,7 @@ class UsersController < ApplicationController
 
   # POST /users
   def create
-    @user = User.new(user_params)
+    @user = model.new(user_params)
 
     if @user.save
       UserMailer.welcome_email(@user).deliver_now
@@ -39,7 +39,7 @@ class UsersController < ApplicationController
   private
 
     def model
-      User
+      @current_account.users
     end
 
     def write_actions

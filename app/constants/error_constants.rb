@@ -9,6 +9,7 @@ module ErrorConstants
     not_privileged: "Insufficient privileges",
     record_not_found: "Couldn't find %s with '%s'=%s",
     token_expired: 'Token expired',
+    token_invalid: 'Token is invalid',
     update_not_allowed: "Update not allowed for %s"
   }.freeze
 end.freeze

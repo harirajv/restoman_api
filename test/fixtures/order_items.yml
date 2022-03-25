@@ -9,3 +9,8 @@ two:
   dish: two
   order: two
   quantity: 1
+
+three:
+  dish: one
+  order: three
+  quantity: 1

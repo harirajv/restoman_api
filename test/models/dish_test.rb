@@ -22,8 +22,14 @@ class DishTest < ActiveSupport::TestCase
     dish.errors.added? :cost, :greater_than_or_equal_to, value: 0.0, count: 0.01
   end
 
-  test 'valid dish' do
+  test 'account must exist' do
     dish = Dish.new(name: 'name', description: 'text', cost:10.0)
+    refute dish.valid?
+    assert dish.errors.added? :account, :blank
+  end
+
+  test 'valid dish' do
+    dish = Dish.new(name: 'name', description: 'text', cost:10.0, account: accounts(:one))
     assert dish.valid?
   end
 end

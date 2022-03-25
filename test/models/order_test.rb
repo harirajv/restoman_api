@@ -8,13 +8,19 @@ class OrderTest < ActiveSupport::TestCase
   end
 
   test 'is_active default value is true' do
-    order = Order.new(table_no: 1, user_id: User.first.id)
+    order = Order.new(table_no: 1, user: users(:admin), account: accounts(:one))
     assert order.valid?
     assert_equal order.is_active, true
   end
 
+  test 'account must exist' do
+    order = Order.new(table_no: 1, user: users(:admin))
+    refute order.valid?
+    assert order.errors.added? :account, :blank
+  end
+
   test 'valid order' do
-    order = Order.new(table_no: 1, user_id: User.first.id)
+    order = Order.new(table_no: 1, user: users(:admin), account: accounts(:one))
     assert order.valid?
   end
 end

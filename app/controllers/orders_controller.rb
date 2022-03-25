@@ -6,7 +6,7 @@ class OrdersController < ApplicationController
   
   # GET /orders
   def index
-    orders = paginate Order.includes(:order_items), page: page, per_page: per_page
+    orders = paginate model.includes(:order_items), page: page, per_page: per_page
     render json: orders.to_json(include: :order_items), status: :ok
   end
 
@@ -20,7 +20,7 @@ class OrdersController < ApplicationController
     # TODO Does N+1 insert problem exist here? Is transaction required?
     # Use default has_many association to save records and optimize if necessary
     ActiveRecord::Base.transaction do
-      @order = @current_user.orders.create!(table_no: order_params[:table_no])
+      @order = model.create!(table_no: order_params[:table_no], user: @current_user)
       add_order_items(@order, order_items_params)
     end
     render json: @order.to_json(include: :order_items), status: :created
@@ -43,7 +43,7 @@ class OrdersController < ApplicationController
 
   private
     def model
-      Order
+      @current_account.orders
     end
 
     def write_actions

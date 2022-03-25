@@ -5,15 +5,25 @@ admin:
   role: 0
   email: admin@resto.com
   password_digest: <%= BCrypt::Password.create('password') %>
+  account: one
 
 waiter:
   name: waiter_user
   role: 1
   email: waiter@resto.com
   password_digest: <%= BCrypt::Password.create('password') %>
+  account: one
 
 chef:
   name: chef_user
   role: 2
   email: chef@resto.com
   password_digest: <%= BCrypt::Password.create('password') %>
+  account: one
+
+cafe_admin:
+  name: admin
+  role: 0
+  email: admin@cafe.com
+  password_digest: <%= BCrypt::Password.create('password') %>
+  account: two

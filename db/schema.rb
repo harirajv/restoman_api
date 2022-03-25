@@ -10,7 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_26_052714) do
+ActiveRecord::Schema.define(version: 2022_03_22_161944) do
+
+  create_table "accounts", charset: "utf8mb4", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "subdomain", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["subdomain"], name: "index_accounts_on_subdomain", unique: true
+  end
 
   create_table "bills", charset: "utf8mb4", force: :cascade do |t|
     t.bigint "order_id"
@@ -29,6 +37,8 @@ ActiveRecord::Schema.define(version: 2022_01_26_052714) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "is_active", default: true
+    t.bigint "account_id"
+    t.index ["account_id"], name: "index_dishes_on_account_id"
   end
 
   create_table "order_items", charset: "utf8mb4", force: :cascade do |t|
@@ -48,6 +58,8 @@ ActiveRecord::Schema.define(version: 2022_01_26_052714) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
+    t.bigint "account_id"
+    t.index ["account_id"], name: "index_orders_on_account_id"
     t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
@@ -60,11 +72,16 @@ ActiveRecord::Schema.define(version: 2022_01_26_052714) do
     t.string "password_digest"
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
+    t.bigint "account_id"
+    t.index ["account_id"], name: "index_users_on_account_id"
     t.index ["email"], name: "index_users_on_email"
   end
 
   add_foreign_key "bills", "orders"
+  add_foreign_key "dishes", "accounts"
   add_foreign_key "order_items", "dishes"
   add_foreign_key "order_items", "orders"
+  add_foreign_key "orders", "accounts"
   add_foreign_key "orders", "users"
+  add_foreign_key "users", "accounts"
 end

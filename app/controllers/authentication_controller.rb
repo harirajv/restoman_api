@@ -7,31 +7,29 @@ class AuthenticationController < ApplicationController
 
   # POST /login
   def login
-    if @user.authenticate(login_params[:password])
-      @token = JsonWebToken.encode({ user_id: @user.id, role: @user.role })
-      Redis.current.set(@token, @user.id)
-      Redis.current.expire(@token, JWT_EXPIRY_TIME)
-      render json: { user: @user.facade, token: @token }, status: :ok
+    if @current_user.authenticate(login_params[:password])
+      @token = JsonWebToken.generate_token @current_user
+      render json: { user: @current_user.facade, token: @token }, status: :ok
     else
       render json: { errors: [ERROR_MESSAGES[:invalid_password]] }, status: :unauthorized
     end
   end
 
   def forgot
-    @user.generate_password_token!
-    UserMailer.reset_password_email(@user).deliver_later
+    @current_user.generate_password_token!
+    UserMailer.reset_password_email(@current_user).deliver_later
     render json: {}, status: :ok
   rescue => e
     render json: { errors: [e.message] }, status: :unprocessable_entity
   end
 
   def reset
-    if login_params[:token].nil? || !@user.password_token_valid?
+    if login_params[:token].nil? || !@current_user.password_token_valid?
       render json: { errors: [ERROR_MESSAGES[:token_expired]] }, status: :bad_request
       return
     end
 
-    @user.reset_password!(login_params[:password])
+    @current_user.reset_password!(login_params[:password])
     render json: {}, status: :ok
   rescue => e
       render json: { errors: [e.message] }, status: :unprocessable_entity
@@ -39,26 +37,19 @@ class AuthenticationController < ApplicationController
 
   def logout
     Redis.current.del(@token)
-    Rails.logger.info "#{@current_user.email} has logged out"
+    Rails.logger.info "Account #{@current_account.id} : User #{@current_user.email} has logged out"
     head :no_content
   end
 
   private
-
-    def model
-      # Not relevant
-    end
-
     def login_params
       params.require(:authentication).permit(:email, :password, :password_confirmation, :token)
     end
 
     def set_user
-      @user = User.find_by_email(login_params[:email])
-      if @user.nil?
-        render json: { errors: [ERROR_MESSAGES[:invalid_user_email] % login_params[:email]] }, status: :not_found
-        return
-      end
+      @current_user = @current_account.users.find_by_email!(login_params[:email])
+    rescue ActiveRecord::RecordNotFound
+      render json: { errors: [ERROR_MESSAGES[:invalid_user_email] % login_params[:email]] }, status: :not_found
     end
 
     def authenticate!
@@ -66,9 +57,9 @@ class AuthenticationController < ApplicationController
 
       @token = request.headers['Authorization']
       @decoded = JsonWebToken.decode(@token)
-      @current_user = User.find(@decoded[:user_id]) if @decoded
+      @current_user = @current_account.users.find(@decoded[:user_id]) if @decoded
     rescue => e
-      Rails.logger.error "JWT decode failed - #{e.message} token - #{@token}"
+      Rails.logger.error "Error while logging out - #{e.message}, account id - #{@current_account.id}, token - #{@token}"
       head :reset_content
     end
 end

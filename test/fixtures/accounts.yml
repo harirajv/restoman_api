@@ -1,0 +1,8 @@
+one:
+  name: Restaurant
+  subdomain: restaurant
+
+
+two:
+  name: Cafe
+  subdomain: cafe

@@ -14,6 +14,15 @@ class AuthenticationControllerTest < ActionDispatch::IntegrationTest
     assert_json_match(error_response(ERROR_MESSAGES[:invalid_user_email] % 'invalid@email.com'), response.body)
   end
 
+  test "login should return not_found if email does not belong to any user of the account" do
+    host! accounts(:two).full_domain
+    invalid_email = accounts(:one).users.first.email
+    post login_path, params: { email: invalid_email, password: 'password' }, as: :json
+
+    assert_response 404
+    assert_json_match(error_response(ERROR_MESSAGES[:invalid_user_email] % invalid_email), response.body)
+  end
+
   test "login should return unauthorized if password is invalid" do
     post login_path, params: { email: @user.email, password: 'invalid' }, as: :json
 
@@ -27,7 +36,7 @@ class AuthenticationControllerTest < ActionDispatch::IntegrationTest
     assert_response 200
     pattern = { user: @user.facade.as_json, token: wildcard_matcher }
     assert_json_match(pattern, response.body)
-    assert_equal @user.id.to_s, Redis.current.get(response.parsed_body['token'])
+    assert_equal @user.account_id.to_s, Redis.current.get(response.parsed_body['token'])
   end
 
   test "forgot should return not_found if email is invalid" do
@@ -89,7 +98,7 @@ class AuthenticationControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "logout should cause all further requests to return unauthorized" do
-    token = generate_jwt(@user)
+    token = JsonWebToken.generate_token(@user)
     delete logout_path, headers: { Authorization: token }, as: :json
     assert_response 204
 

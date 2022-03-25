@@ -8,7 +8,7 @@ class DishesController < ApplicationController
 
   # POST /dishes
   def create
-    @dish = Dish.new(dish_params)
+    @dish = model.new(dish_params)
 
     if @dish.save
       render json: @dish, status: :created, location: @dish
@@ -34,7 +34,7 @@ class DishesController < ApplicationController
   private
 
     def model
-      Dish
+      @current_account.dishes
     end
     
     def chef_permitted_write_actions

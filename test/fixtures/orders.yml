@@ -3,9 +3,17 @@
 one:
   table_no: 1
   is_active: true
+  account: one
   user: waiter
 
 two:
   table_no: 2
   is_active: false
+  account: one
   user: waiter
+
+three:
+  table_no: 3
+  is_active: false
+  account: two
+  user: cafe_admin

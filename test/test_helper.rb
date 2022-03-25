@@ -11,14 +11,13 @@ class ActiveSupport::TestCase
 
   # Add more helper methods to be used by all tests here...
   private
-
-    def generate_jwt(user)
-      token = JsonWebToken.encode({user_id: user.id, role:user.role})
-      Redis.current.set(token, @user.id)
-      token
-    end
-
     def error_response(error)
       { errors: [*error] }
     end
+end
+
+class ActionDispatch::IntegrationTest
+  setup do
+    host! accounts(:one).full_domain
+  end
 end
