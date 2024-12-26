@@ -7,6 +7,12 @@ Ruby 2.6.6
 MySQL 5.7
 Redis 6.0.5-alpine
 
+# Installing Ruby
+```
+rvm pkg install openssl
+rvm install "ruby-2.7.2" --with-openssl-dir=$HOME/.rvm/usr
+```
+
 # Starting the dependency services
 `$ docker-compose up`
 
