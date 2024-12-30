@@ -38,3 +38,6 @@ The Swagger API doc is available at [http://localhost:3000/index.html](http://lo
 
 ## How to run the test suite
 `$ rails test test/`
+
+## mysql2 gem installation errors
+Downgrade mysql2 to 0.5.1 and then follow https://stackoverflow.com/a/64651380
