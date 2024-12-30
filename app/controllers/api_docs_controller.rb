@@ -38,24 +38,26 @@ class ApiDocsController < ActionController::Base
   # A list of all classes that have swagger_* declarations.
   SWAGGERED_CLASSES = [
     UsersController,
-    # UserSchema,
-    # UserInput,
+    SwaggerDocs::UserSchema,
+    SwaggerDocs::UserInput,
     DishesController,
-    # DishSchema,
-    # DishInput,
+    SwaggerDocs::DishSchema,
+    SwaggerDocs::DishInput,
     OrdersController,
-    # OrderSchema,
-    # OrderInput,
-    # OrderUpdateInput,
-    # OrderItemSchema,
-    # OrderItemInput,
-    # OrderItemUpdateInput,
+    SwaggerDocs::OrderSchema,
+    SwaggerDocs::OrderInput,
+    SwaggerDocs::OrderUpdateInput,
+    SwaggerDocs::OrderItemSchema,
+    SwaggerDocs::OrderItemInput,
+    SwaggerDocs::OrderItemUpdateInput,
     AuthenticationController,
-    # LoginSchema,
+    SwaggerDocs::LoginSchema,
     self,
   ].freeze
 
   def index
+    swagger_data = Swagger::Blocks.build_root_json(SWAGGERED_CLASSES)
+    File.open('swagger.json', 'w') { |file| file.write(swagger_data.to_json) }
     render json: Swagger::Blocks.build_root_json(SWAGGERED_CLASSES)
   end
 end
